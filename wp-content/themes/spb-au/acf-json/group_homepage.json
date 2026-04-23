@@ -2390,6 +2390,31 @@
             "delay": 0
         },
         {
+            "key": "field_cons_photo",
+            "label": "Фото слева",
+            "name": "cons_photo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
             "key": "field_cons_btn",
             "label": "Текст кнопки",
             "name": "cons_btn",
@@ -2630,5 +2655,5 @@
     "description": "",
     "show_in_rest": 0,
     "display_title": "",
-    "modified": 1776972886
+    "modified": 1776973335
 }

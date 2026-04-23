@@ -8,6 +8,29 @@ $booking_form_message = isset($_GET["booking_form_message"])
     ? sanitize_text_field(wp_unslash($_GET["booking_form_message"]))
     : "";
 
+$cons_photo_raw = function_exists("get_field") ? get_field("cons_photo") : null;
+$cons_photo_url = "";
+$cons_photo_alt = "";
+if (is_array($cons_photo_raw)) {
+    $cons_photo_url = isset($cons_photo_raw["url"])
+        ? (string) $cons_photo_raw["url"]
+        : "";
+    $cons_photo_alt = isset($cons_photo_raw["alt"])
+        ? (string) $cons_photo_raw["alt"]
+        : "";
+} elseif (is_string($cons_photo_raw)) {
+    $cons_photo_url = $cons_photo_raw;
+} elseif (is_numeric($cons_photo_raw)) {
+    $cons_photo_url = (string) wp_get_attachment_url((int) $cons_photo_raw);
+}
+$cons_photo_url = esc_url_raw(trim($cons_photo_url));
+if ($cons_photo_url === "") {
+    $cons_photo_url = get_template_directory_uri() . "/images/booking-photo.jpg";
+}
+if ($cons_photo_alt === "") {
+    $cons_photo_alt = "Консультация";
+}
+
 // Generate next 7 days
 $days = [];
 $day_names = ['Воскресенье','Понедельник','Вторник','Среда','Четверг','Пятница','Суббота'];
@@ -44,7 +67,7 @@ $now_ts = current_time('timestamp');
             <!-- Left -->
             <div class="booking__left">
                 <div class="booking__photo">
-                    <img src="<?php echo get_template_directory_uri(); ?>/images/booking-photo.jpg" alt="">
+                    <img src="<?php echo esc_url($cons_photo_url); ?>" alt="<?php echo esc_attr($cons_photo_alt); ?>">
                 </div>
                 <ul class="booking__list">
                     <li>1–1,5 часа консультации с менеджером-юристом</li>
