@@ -14187,14 +14187,6 @@ a.breadcrumb__item:hover {
 }
 
 /* ===== Single Review ===== */
-.single-review__read-time {
-    margin: -6px 0 4px;
-    font-family: "Onest", sans-serif;
-    font-weight: 500;
-    font-size: 22px;
-    line-height: 140%;
-    color: #667084;
-}
 
 .single-review .single-case__review-text p {
     margin: 0 0 12px;
@@ -14279,11 +14271,6 @@ a.breadcrumb__item:hover {
 }
 
 @media (max-width: 1024px) {
-    .single-review__read-time {
-        font-size: 18px;
-        margin-top: -2px;
-    }
-
     .single-review__related-title {
         font-size: 28px;
     }

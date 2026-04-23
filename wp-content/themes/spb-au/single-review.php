@@ -33,17 +33,6 @@ $creditor_type_names =
         : "";
 
 $archive_title = "Отзывы";
-$read_source = $review_text !== "" ? $review_text : get_the_content();
-$read_time = spbau_reading_time($read_source);
-$minute_label = "минут";
-if ($read_time % 10 === 1 && $read_time % 100 !== 11) {
-    $minute_label = "минута";
-} elseif (
-    in_array($read_time % 10, [2, 3, 4], true) &&
-    !in_array($read_time % 100, [12, 13, 14], true)
-) {
-    $minute_label = "минуты";
-}
 
 $review_photo_url = "";
 $review_photo_alt = "";
@@ -95,9 +84,6 @@ $related = new WP_Query([
                 <h2 class="single-case__title"><?php echo esc_html(
                     $person_name,
                 ); ?></h2>
-                <p class="single-review__read-time">Время прочтения: <?php echo esc_html(
-                    (string) $read_time,
-                ); ?> <?php echo esc_html($minute_label); ?></p>
 
                 <div class="case-card__row single-case__details-row">
                     <div class="case-card__body single-case__details-body">
