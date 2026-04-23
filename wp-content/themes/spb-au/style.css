@@ -14185,3 +14185,121 @@ a.breadcrumb__item:hover {
         font-size: 16px;
     }
 }
+
+/* ===== Single Review ===== */
+.single-review__read-time {
+    margin: -6px 0 4px;
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 140%;
+    color: #667084;
+}
+
+.single-review .single-case__review-text p {
+    margin: 0 0 12px;
+}
+
+.single-review .single-case__review-text p:last-child {
+    margin-bottom: 0;
+}
+
+.single-review__related {
+    padding-bottom: 56px;
+}
+
+.single-review__related-title {
+    margin: 0 0 24px;
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 120%;
+    color: #09152b;
+}
+
+.single-review__related-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.single-review__related-card {
+    background: #fff;
+    border-radius: 24px;
+    padding: 22px 20px;
+    box-shadow:
+        0 20px 20px -5px rgba(0, 0, 0, 0.04),
+        0 0 12px 0 rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.single-review__related-name {
+    margin: 0;
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 126%;
+    color: #09152b;
+}
+
+.single-review__related-amount {
+    margin: 0;
+    font-size: 18px;
+    line-height: 140%;
+    color: #5e6573;
+}
+
+.single-review__related-link {
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: #2d6bd9;
+    color: #fff;
+    text-decoration: none;
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 120%;
+    padding: 12px 18px;
+    transition: background 0.2s;
+}
+
+.single-review__related-link:hover {
+    background: #1e50aa;
+}
+
+@media (max-width: 1280px) {
+    .single-review__related-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 1024px) {
+    .single-review__read-time {
+        font-size: 18px;
+        margin-top: -2px;
+    }
+
+    .single-review__related-title {
+        font-size: 28px;
+    }
+}
+
+@media (max-width: 768px) {
+    .single-review__related {
+        padding-bottom: 24px;
+    }
+
+    .single-review__related-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .single-review__related-title {
+        font-size: 24px;
+        margin-bottom: 16px;
+    }
+}
