@@ -26,9 +26,10 @@ if (!defined("ABSPATH")) {
                 "menu_class" => "nav-list",
                 "container" => false,
                 "fallback_cb" => static function () {
+                    $reviews_link = get_post_type_archive_link("review") ?: home_url("/review/");
                     echo '<ul class="nav-list">
                         <li><a href="#">Услуги по банкротству</a></li>
-                        <li><a href="/reviews/">Отзывы и кейсы</a></li>
+                        <li><a href="' . esc_url($reviews_link) . '">Отзывы и кейсы</a></li>
                         <li><a href="#">Завод банкротства</a></li>
                         <li><a href="#">Статьи</a></li>
                         <li><a href="#">Контакты</a></li>
@@ -96,9 +97,10 @@ if (!defined("ABSPATH")) {
                 "menu_class"     => "mobile-nav-list",
                 "container"      => false,
                 "fallback_cb"    => static function () {
+                    $reviews_link = get_post_type_archive_link("review") ?: home_url("/review/");
                     echo '<ul class="mobile-nav-list">
                         <li><a href="#">Услуги по банкротству</a></li>
-                        <li><a href="/reviews/">Отзывы и кейсы</a></li>
+                        <li><a href="' . esc_url($reviews_link) . '">Отзывы и кейсы</a></li>
                         <li><a href="#">Завод банкротства</a></li>
                         <li><a href="#">Статьи</a></li>
                         <li><a href="#">Контакты</a></li>

@@ -151,7 +151,7 @@ add_action("init", static function (): void {
             "edit_item" => "Редактировать отзыв",
         ],
         "public" => true,
-        "has_archive" => false,
+        "has_archive" => "review",
         "show_in_rest" => true,
         "supports" => ["title"],
         "menu_icon" => "dashicons-testimonial",
@@ -202,6 +202,14 @@ add_action("init", static function (): void {
         "menu_position" => 7,
     ]);
 });
+
+add_action("init", static function (): void {
+    $rewrite_version = "spbau_rewrite_v20260423_review_archive";
+    if (get_option("spbau_rewrite_version") !== $rewrite_version) {
+        flush_rewrite_rules(false);
+        update_option("spbau_rewrite_version", $rewrite_version, false);
+    }
+}, 99);
 
 // Время чтения статьи
 /**

@@ -10,6 +10,7 @@ $footer_form_status = isset($_GET["footer_form_status"])
 $footer_form_message = isset($_GET["footer_form_message"])
     ? sanitize_text_field(wp_unslash($_GET["footer_form_message"]))
     : "";
+$reviews_link = get_post_type_archive_link("review") ?: home_url("/review/");
 ?>
 <footer class="site-footer" id="site-footer">
     <div class="footer-inner">
@@ -28,7 +29,7 @@ $footer_form_message = isset($_GET["footer_form_message"])
             <nav class="footer-col footer-nav-col">
                 <ul>
                     <li><a href="/uslugi_po_bankrotstvu">Услуги</a></li>
-                    <li><a href="/reviews/">Отзывы</a></li>
+                    <li><a href="<?php echo esc_url($reviews_link); ?>">Отзывы</a></li>
                     <li><a href="/cases/">Завершённые дела</a></li>
                     <li><a href="/uslugi_po_bankrotstvu/">Завод Банкротств</a></li>
                     <li><a href="/stati/">Статьи</a></li>

@@ -36,6 +36,16 @@ if (!defined('ABSPATH')) {
         <span class="breadcrumb__sep">—</span>
         <span class="breadcrumb__item breadcrumb__item--current"><?php the_title(); ?></span>
 
+    <?php elseif (is_post_type_archive('review')): ?>
+        <span class="breadcrumb__sep">—</span>
+        <span class="breadcrumb__item breadcrumb__item--current">Отзывы</span>
+
+    <?php elseif (is_singular('review')): ?>
+        <span class="breadcrumb__sep">—</span>
+        <a href="<?php echo esc_url(get_post_type_archive_link('review')); ?>" class="breadcrumb__item">Отзывы</a>
+        <span class="breadcrumb__sep">—</span>
+        <span class="breadcrumb__item breadcrumb__item--current"><?php the_title(); ?></span>
+
     <?php elseif (is_post_type_archive('service')): ?>
         <span class="breadcrumb__sep">—</span>
         <span class="breadcrumb__item breadcrumb__item--current">Услуги</span>
