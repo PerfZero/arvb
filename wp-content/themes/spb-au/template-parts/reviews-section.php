@@ -36,6 +36,21 @@ $parse_creditors = static function (string $value): array {
     }
     return array_values(array_unique($result));
 };
+/**
+ * @return string
+ */
+$creditor_key = static function (string $value): string {
+    $value = trim($value);
+    if ($value === "") {
+        return "";
+    }
+    if (function_exists("mb_strtolower")) {
+        $value = mb_strtolower($value, "UTF-8");
+    } else {
+        $value = strtolower($value);
+    }
+    return substr(md5($value), 0, 12);
+};
 
 if (is_wp_error($debt_types) || !is_array($debt_types)) {
     $debt_types = [];
@@ -55,7 +70,7 @@ if (!empty($reviews->posts)) {
             continue;
         }
         foreach ($parse_creditors($creditors_raw) as $creditor_item) {
-            $slug = sanitize_title($creditor_item);
+            $slug = $creditor_key($creditor_item);
             if ($slug === "" || isset($creditor_options[$slug])) {
                 continue;
             }
@@ -69,6 +84,7 @@ $per_page = 5;
 $i = 0;
 ?>
 <section class="cases-section reviews-section">
+    <div class="cases-inner">
     <h2 class="cases-title"><?php echo esc_html($title); ?></h2>
     <div class="cases-layout">
 
@@ -184,7 +200,7 @@ $i = 0;
                             $parse_creditors((string) $creditors_text)
                             as $creditor_item
                         ) {
-                            $slug = sanitize_title($creditor_item);
+                            $slug = $creditor_key($creditor_item);
                             if ($slug !== "") {
                                 $creditor_slug_list[] = $slug;
                             }
@@ -267,4 +283,5 @@ $i = 0;
         <button class="cases-more-btn" data-shown="<?php echo esc_attr((string) $per_page); ?>">Смотреть ещё</button>
     </div>
     <?php endif; ?>
+    </div>
 </section>

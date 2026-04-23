@@ -7,7 +7,9 @@ get_header();
 ?>
 
 <main class="archive-reviews">
-    <?php get_template_part("template-parts/breadcrumb"); ?>
+    <div class="cases-inner">
+        <?php get_template_part("template-parts/breadcrumb"); ?>
+    </div>
     <?php get_template_part("template-parts/reviews-section"); ?>
 </main>
 

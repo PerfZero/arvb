@@ -332,7 +332,7 @@ add_action("wp_enqueue_scripts", static function (): void {
         "spb-cases-filter",
         get_template_directory_uri() . "/js/cases-filter.js",
         [],
-        null,
+        wp_get_theme()->get("Version"),
         true,
     );
 
