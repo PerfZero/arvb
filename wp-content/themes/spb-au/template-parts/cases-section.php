@@ -14,6 +14,12 @@ $creditor_types = get_terms([
     "taxonomy" => "case_creditor_type",
     "hide_empty" => false,
 ]);
+if (is_wp_error($debt_types) || !is_array($debt_types)) {
+    $debt_types = [];
+}
+if (is_wp_error($creditor_types) || !is_array($creditor_types)) {
+    $creditor_types = [];
+}
 $age_ranges = [
     "all" => "Все",
     "lt30" => "До 30 лет",
@@ -88,7 +94,6 @@ $i = 0;
                     <?php endforeach; ?>
                     </div>
                 </div>
-                <?php if (!empty($debt_types) && !is_wp_error($debt_types)): ?>
                 <div class="filter-group">
                     <div class="filter-group__title">Вид долгов</div>
                     <div class="filter-group__items">
@@ -103,8 +108,6 @@ $i = 0;
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <?php endif; ?>
-                <?php if (!empty($creditor_types) && !is_wp_error($creditor_types)): ?>
                 <div class="filter-group">
                     <div class="filter-group__title">Типы кредиторов</div>
                     <div class="filter-group__items">
@@ -119,7 +122,6 @@ $i = 0;
                         <?php endforeach; ?>
                     </div>
                 </div>
-                <?php endif; ?>
                 <?php if (!empty($problem_options)): ?>
                 <div class="filter-group">
                     <div class="filter-group__title">Проблема клиента</div>
