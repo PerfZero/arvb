@@ -1,0 +1,106 @@
+{
+    "key": "group_service_hero",
+    "title": "Услуга: поля героя",
+    "fields": [
+        {
+            "key": "field_service_badge",
+            "label": "Бейдж",
+            "name": "service_badge",
+            "type": "text",
+            "default_value": "УСЛУГИ",
+            "instructions": "",
+            "required": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "key": "field_service_desc",
+            "label": "Описание",
+            "name": "service_desc",
+            "type": "textarea",
+            "default_value": "",
+            "instructions": "",
+            "required": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "key": "field_service_btn_text",
+            "label": "Текст кнопки",
+            "name": "service_btn_text",
+            "type": "text",
+            "default_value": "",
+            "instructions": "",
+            "required": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        },
+        {
+            "key": "field_service_tags",
+            "label": "Теги",
+            "name": "service_tags",
+            "type": "repeater",
+            "instructions": "Маленькие пилюли под описанием",
+            "required": 0,
+            "wrapper": {"width": "", "class": "", "id": ""},
+            "layout": "table",
+            "button_label": "Добавить тег",
+            "min": 0,
+            "max": 6,
+            "sub_fields": [
+                {
+                    "key": "field_service_tag_text",
+                    "label": "Тег",
+                    "name": "service_tag_text",
+                    "type": "text",
+                    "wrapper": {"width": "100", "class": "", "id": ""},
+                    "default_value": "",
+                    "placeholder": "кредиты",
+                    "parent_repeater": "field_service_tags"
+                }
+            ]
+        },
+        {
+            "key": "field_service_hero_image",
+            "label": "Фото героя",
+            "name": "service_hero_image",
+            "type": "image",
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "instructions": "",
+            "required": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            }
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "service"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": "",
+    "active": true,
+    "description": ""
+}

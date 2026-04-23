@@ -1,0 +1,54 @@
+{
+    "key": "group_article_gallery",
+    "title": "Галерея статьи",
+    "fields": [
+        {
+            "key": "field_article_gallery",
+            "label": "Галерея",
+            "name": "article_gallery",
+            "aria-label": "",
+            "type": "gallery",
+            "instructions": "Добавьте изображения. Первое — главное (большое), остальные — миниатюры.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "insert": "append",
+            "library": "all",
+            "min": 0,
+            "max": 0,
+            "min_width": 0,
+            "min_height": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "mime_types": "",
+            "min_size": 0,
+            "max_size": 0
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "post"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774191065
+}

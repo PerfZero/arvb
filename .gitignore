@@ -1,0 +1,27 @@
+# Theme-only repository scope.
+*
+
+# Keep repository metadata and deployment config.
+!.gitignore
+!.github/
+!.github/workflows/
+!.github/workflows/deploy-theme.yml
+!deploy/
+!deploy/theme/
+!deploy/theme/deploy-theme.sh
+!README.md
+
+# Keep only active WordPress theme files.
+!wp-content/
+wp-content/*
+!wp-content/themes/
+wp-content/themes/*
+!wp-content/themes/spb-au/
+!wp-content/themes/spb-au/**
+
+# Never commit local/system artifacts.
+.DS_Store
+**/.DS_Store
+**/._*
+tmp/
+.playwright-mcp/

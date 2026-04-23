@@ -1,0 +1,1721 @@
+<?php
+if (!defined("ABSPATH")) {
+    exit();
+}
+
+// ACF Options Page
+if (function_exists("acf_add_options_page")) {
+    acf_add_options_page([
+        "page_title" => "Настройки сайта",
+        "menu_title" => "Настройки сайта",
+        "menu_slug" => "site-settings",
+        "capability" => "edit_posts",
+        "redirect" => false,
+    ]);
+}
+
+// Таксономия для СМИ (отдельная от рубрик статей)
+add_action("init", static function (): void {
+    register_taxonomy("smi_category", "smi", [
+        "labels" => [
+            "name" => "Категории СМИ",
+            "singular_name" => "Категория СМИ",
+            "add_new_item" => "Добавить категорию",
+        ],
+        "hierarchical" => true,
+        "show_ui" => true,
+        "show_in_menu" => true,
+        "rewrite" => ["slug" => "smi-category"],
+    ]);
+});
+
+// Кастомный тип записей: Публикации в СМИ
+add_action("init", static function (): void {
+    register_post_type("smi", [
+        "labels" => [
+            "name" => "Публикации в СМИ",
+            "singular_name" => "Публикация в СМИ",
+            "add_new_item" => "Добавить публикацию",
+            "edit_item" => "Редактировать публикацию",
+        ],
+        "public" => true,
+        "show_in_menu" => true,
+        "supports" => ["title", "excerpt", "thumbnail", "custom-fields"],
+        "menu_icon" => "dashicons-media-text",
+        "has_archive" => false,
+        "rewrite" => ["slug" => "smi"],
+    ]);
+});
+
+add_action("after_setup_theme", static function (): void {
+    add_theme_support("title-tag");
+    add_theme_support("post-thumbnails");
+    add_theme_support("custom-logo");
+
+    register_nav_menus([
+        "primary"   => __("Основное меню", "spb-au"),
+        "secondary" => __("Дополнительное меню", "spb-au"),
+    ]);
+});
+
+// Отключаем глобальные стили и SVG-фильтры WordPress (убирают "острова")
+add_action(
+    "wp_enqueue_scripts",
+    static function (): void {
+        wp_dequeue_style("global-styles");
+        wp_dequeue_style("core-block-supports");
+    },
+    100,
+);
+
+add_filter(
+    "wp_enqueue_scripts",
+    static function (): void {
+        remove_action("wp_print_styles", "print_emoji_styles");
+    },
+    11,
+);
+
+remove_action("wp_head", "wp_global_styles_render_svg_filters");
+
+// ACF JSON — сохранять/загружать из папки темы
+add_filter("acf/settings/save_json", function () {
+    return get_stylesheet_directory() . "/acf-json";
+});
+add_filter("acf/settings/load_json", function ($paths) {
+    $paths[] = get_stylesheet_directory() . "/acf-json";
+    return $paths;
+});
+
+// Кастомный тип записей: Услуги
+add_action("init", static function (): void {
+    register_post_type("service", [
+        "labels" => [
+            "name" => "Услуги",
+            "singular_name" => "Услуга",
+            "add_new_item" => "Добавить услугу",
+            "edit_item" => "Редактировать услугу",
+        ],
+        "public" => true,
+        "has_archive" => false,
+        "show_in_rest" => true,
+        "supports" => ["title", "thumbnail"],
+        "menu_icon" => "dashicons-hammer",
+        "rewrite" => ["slug" => "uslugi"],
+    ]);
+});
+
+// Кастомный тип записей: Завершенные дела
+add_action("init", static function (): void {
+    register_post_type("case", [
+        "labels" => [
+            "name" => "Завершённые дела",
+            "singular_name" => "Дело",
+            "add_new_item" => "Добавить дело",
+            "edit_item" => "Редактировать дело",
+        ],
+        "public" => true,
+        "has_archive" => "cases",
+        "show_in_rest" => true,
+        "supports" => ["title", "thumbnail"],
+        "menu_icon" => "dashicons-portfolio",
+        "rewrite" => ["slug" => "cases"],
+    ]);
+
+    register_taxonomy("case_status", "case", [
+        "label" => "Статус",
+        "hierarchical" => false,
+        "show_in_rest" => true,
+        "rewrite" => ["slug" => "case-status"],
+    ]);
+
+    register_taxonomy("case_debt_type", "case", [
+        "label" => "Вид долгов",
+        "hierarchical" => false,
+        "show_in_rest" => true,
+        "rewrite" => ["slug" => "case-debt-type"],
+    ]);
+
+    register_post_type("faq_video", [
+        "labels" => [
+            "name" => "FAQ видео",
+            "singular_name" => "FAQ видео",
+            "add_new_item" => "Добавить видео",
+            "edit_item" => "Редактировать видео",
+        ],
+        "public" => false,
+        "show_ui" => true,
+        "show_in_rest" => false,
+        "supports" => ["title", "thumbnail"],
+        "menu_icon" => "dashicons-video-alt3",
+        "menu_position" => 6,
+    ]);
+
+    register_post_type("team_member", [
+        "labels" => [
+            "name" => "Команда",
+            "singular_name" => "Сотрудник",
+            "add_new_item" => "Добавить сотрудника",
+            "edit_item" => "Редактировать сотрудника",
+        ],
+        "public" => false,
+        "show_ui" => true,
+        "show_in_rest" => false,
+        "supports" => ["title", "excerpt", "thumbnail", "page-attributes"],
+        "menu_icon" => "dashicons-groups",
+        "menu_position" => 7,
+    ]);
+});
+
+// Время чтения статьи
+/**
+ * Конвертирует ссылку VK (clip/video) в embed URL для iframe.
+ * Поддерживает:
+ *   https://vk.com/clip-12345_67890
+ *   https://vk.com/video-12345_67890
+ *   https://vk.com/video?z=video-12345_67890
+ */
+function spbau_vk_embed_url(string $url): string
+{
+    // vk.com/clip-OID_VID или vk.com/video-OID_VID
+    if (preg_match("#vk\.com/(?:clip|video)(-?\d+)_(\d+)#", $url, $m)) {
+        return "https://vk.com/video_ext.php?oid=" .
+            $m[1] .
+            "&id=" .
+            $m[2] .
+            "&hd=2&autoplay=1";
+    }
+    // vk.com/video?z=video-OID_VID или vk.com/video?z=clip-OID_VID
+    if (preg_match("#[?&]z=(?:video|clip)(-?\d+)_(\d+)#", $url, $m)) {
+        return "https://vk.com/video_ext.php?oid=" .
+            $m[1] .
+            "&id=" .
+            $m[2] .
+            "&hd=2&autoplay=1";
+    }
+    // YouTube
+    if (
+        preg_match(
+            "#(?:youtube\.com/watch\?v=|youtu\.be/)([a-zA-Z0-9_-]{11})#",
+            $url,
+            $m,
+        )
+    ) {
+        return "https://www.youtube.com/embed/" . $m[1] . "?autoplay=1";
+    }
+    return $url;
+}
+
+function spbau_reading_time(string $content = ""): int
+{
+    $words = str_word_count(wp_strip_all_tags($content));
+    return max(1, (int) ceil($words / 200));
+}
+
+add_action("wp_enqueue_scripts", static function (): void {
+    $swiper_templates = ['page-loyalty.php', 'page-reviews.php'];
+    $needs_swiper = is_singular('post') || is_front_page()
+        || is_singular('case') || is_singular('service')
+        || (is_page() && in_array(get_page_template_slug(), $swiper_templates, true));
+    if ($needs_swiper) {
+        wp_enqueue_style(
+            "swiper",
+            get_template_directory_uri() . "/libs/swiper/swiper-bundle.min.css",
+            [],
+            "11",
+        );
+        wp_enqueue_script(
+            "swiper",
+            get_template_directory_uri() . "/libs/swiper/swiper-bundle.min.js",
+            [],
+            "11",
+            true,
+        );
+        wp_enqueue_style(
+            "glightbox",
+            "https://cdn.jsdelivr.net/npm/glightbox@3/dist/css/glightbox.min.css",
+            [],
+            null,
+        );
+        wp_enqueue_script(
+            "glightbox",
+            "https://cdn.jsdelivr.net/npm/glightbox@3/dist/js/glightbox.min.js",
+            [],
+            null,
+            true,
+        );
+        wp_enqueue_script(
+            "spb-au-gallery",
+            get_template_directory_uri() . "/js/gallery.js",
+            ["swiper", "glightbox"],
+            wp_get_theme()->get("Version"),
+            true,
+        );
+    }
+});
+
+add_action("wp_enqueue_scripts", static function (): void {
+    wp_enqueue_style(
+        "spb-au-fonts",
+        get_template_directory_uri() . "/fonts/fonts.css",
+        [],
+        wp_get_theme()->get("Version"),
+    );
+    wp_enqueue_style(
+        "spb-au-style",
+        get_stylesheet_uri(),
+        ["spb-au-fonts"],
+        wp_get_theme()->get("Version"),
+    );
+
+    wp_enqueue_script(
+        "spb-au-scale",
+        get_template_directory_uri() . "/js/scale.js",
+        [],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+
+    wp_enqueue_script(
+        "spb-au-menu",
+        get_template_directory_uri() . "/js/menu.js",
+        [],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+
+    wp_enqueue_script(
+        "spb-cases-filter",
+        get_template_directory_uri() . "/js/cases-filter.js",
+        [],
+        null,
+        true,
+    );
+
+    wp_enqueue_style(
+        "intl-tel-input",
+        "https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/css/intlTelInput.css",
+        [],
+        "25.3.1",
+    );
+
+    wp_enqueue_script(
+        "intl-tel-input",
+        "https://cdn.jsdelivr.net/npm/intl-tel-input@25.3.1/build/js/intlTelInput.min.js",
+        [],
+        "25.3.1",
+        true,
+    );
+
+    wp_enqueue_script(
+        "spb-au-phone",
+        get_template_directory_uri() . "/js/phone.js",
+        ["intl-tel-input"],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+
+    wp_enqueue_script(
+        "spb-au-consult-modal",
+        get_template_directory_uri() . "/js/consult-modal.js",
+        [],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+
+    wp_enqueue_script(
+        "spb-au-booking",
+        get_template_directory_uri() . "/js/booking.js",
+        [],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+    wp_localize_script("spb-au-booking", "spbauBookingAjax", [
+        "url" => admin_url("admin-ajax.php"),
+        "action" => "spbau_booking_slots",
+    ]);
+});
+
+function spbau_bitrix_webhook_url(): string
+{
+    if (defined("SPBAU_BITRIX_WEBHOOK_URL") && SPBAU_BITRIX_WEBHOOK_URL) {
+        return trim((string) SPBAU_BITRIX_WEBHOOK_URL);
+    }
+
+    $env_url = getenv("SPBAU_BITRIX_WEBHOOK_URL");
+    if (is_string($env_url) && $env_url !== "") {
+        return trim($env_url);
+    }
+
+    if (function_exists("get_field")) {
+        $acf_url = get_field("bitrix_webhook_url", "option");
+        if (is_string($acf_url) && $acf_url !== "") {
+            return trim($acf_url);
+        }
+    }
+
+    return "";
+}
+
+function spbau_send_smi_lead_to_bitrix(
+    string $phone,
+    string $referer = "",
+    string $title = 'Заявка с формы "Мы в СМИ"',
+    string $source_description = "Сайт spb-au / Мы в СМИ",
+    string $client_name = "Клиент сайта",
+    string $extra_comments = "",
+): array {
+    $webhook = spbau_bitrix_webhook_url();
+    if ($webhook === "") {
+        return [
+            "ok" => false,
+            "message" =>
+                "Не настроен webhook Битрикс. Добавьте SPBAU_BITRIX_WEBHOOK_URL.",
+        ];
+    }
+
+    $endpoint = $webhook;
+    if (stripos($endpoint, "crm.lead.add") === false) {
+        $endpoint = rtrim($endpoint, "/") . "/crm.lead.add.json";
+    }
+
+    $payload = [
+        "fields" => [
+            "TITLE" => $title,
+            "NAME" => $client_name,
+            "PHONE" => [["VALUE" => $phone, "VALUE_TYPE" => "WORK"]],
+            "STATUS_ID" => "UC_3XRA33",
+            "SOURCE_ID" => "WEB",
+            "COMMENTS" =>
+                "Источник: " .
+                $source_description .
+                "\n" .
+                "URL: " .
+                ($referer ?: home_url("/")) .
+                "\n" .
+                "Дата: " .
+                wp_date("Y-m-d H:i:s") .
+                ($extra_comments !== "" ? "\n" . $extra_comments : ""),
+            "SOURCE_DESCRIPTION" => $source_description,
+            "OPENED" => "Y",
+        ],
+        "params" => ["REGISTER_SONET_EVENT" => "Y"],
+    ];
+
+    $timeout = 30;
+    $env_timeout = getenv("SPBAU_BITRIX_TIMEOUT");
+    if (is_string($env_timeout) && $env_timeout !== "") {
+        $timeout = max(10, (int) $env_timeout);
+    } elseif (
+        defined("SPBAU_BITRIX_TIMEOUT") &&
+        is_numeric((string) SPBAU_BITRIX_TIMEOUT)
+    ) {
+        $timeout = max(10, (int) SPBAU_BITRIX_TIMEOUT);
+    }
+
+    $attempts = 2;
+    $response = null;
+    $last_error = "";
+
+    for ($i = 1; $i <= $attempts; $i++) {
+        $response = wp_remote_post($endpoint, [
+            "timeout" => $timeout,
+            "headers" => ["Content-Type" => "application/json; charset=utf-8"],
+            "body" => wp_json_encode($payload),
+        ]);
+
+        if (!is_wp_error($response)) {
+            break;
+        }
+
+        $last_error = (string) $response->get_error_message();
+        $is_timeout =
+            stripos($last_error, "cURL error 28") !== false ||
+            stripos($last_error, "timed out") !== false;
+        if (!$is_timeout || $i >= $attempts) {
+            break;
+        }
+
+        // Небольшая пауза и повтор, если сеть/Bitrix ответили с задержкой.
+        usleep(350000);
+    }
+
+    if (is_wp_error($response)) {
+        $host = (string) wp_parse_url($endpoint, PHP_URL_HOST);
+        $is_timeout =
+            stripos($last_error, "cURL error 28") !== false ||
+            stripos($last_error, "timed out") !== false;
+
+        if ($is_timeout) {
+            return [
+                "ok" => false,
+                "message" =>
+                    "Ошибка отправки в Битрикс: превышено время ожидания ответа от " .
+                    $host .
+                    ". Проверьте доступ сервера к Bitrix24 и корректность webhook.",
+            ];
+        }
+
+        return [
+            "ok" => false,
+            "message" => "Ошибка отправки в Битрикс: " . $last_error,
+        ];
+    }
+
+    $code = (int) wp_remote_retrieve_response_code($response);
+    $body = wp_remote_retrieve_body($response);
+    $decoded = json_decode($body, true);
+
+    if (isset($decoded["error_description"]) && $decoded["error_description"] !== "") {
+        return [
+            "ok" => false,
+            "message" => "Ошибка Битрикс: " . (string) $decoded["error_description"],
+        ];
+    }
+
+    if (isset($decoded["error"]) && $decoded["error"] !== "") {
+        return [
+            "ok" => false,
+            "message" => "Ошибка Битрикс: " . (string) $decoded["error"],
+        ];
+    }
+
+    if ($code < 200 || $code >= 300) {
+        return [
+            "ok" => false,
+            "message" => "Битрикс вернул HTTP " . $code,
+        ];
+    }
+
+    if (!isset($decoded["result"])) {
+        return [
+            "ok" => false,
+            "message" => "Неожиданный ответ Битрикс.",
+        ];
+    }
+
+    return ["ok" => true, "message" => "Заявка отправлена. Скоро свяжемся с вами."];
+}
+
+function spbau_handle_smi_collab_submit(): void
+{
+    $nonce_ok = isset($_POST["spbau_smi_collab_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_smi_collab_nonce"])),
+            "spbau_smi_collab_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "smi_form_status" => "error",
+                    "smi_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $phone_raw = isset($_POST["smi_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["smi_phone"]))
+        : "";
+    $agree = !empty($_POST["smi_agree"]);
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if (strlen($digits) < 10) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "smi_form_status" => "error",
+                    "smi_form_message" =>
+                        "Укажите корректный номер телефона.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if (!$agree) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "smi_form_status" => "error",
+                    "smi_form_message" =>
+                        "Нужно согласие на обработку данных.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix($phone, $redirect);
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "smi_form_status" => $result["ok"] ? "success" : "error",
+                "smi_form_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action("admin_post_spbau_smi_collab_submit", "spbau_handle_smi_collab_submit");
+add_action(
+    "admin_post_nopriv_spbau_smi_collab_submit",
+    "spbau_handle_smi_collab_submit",
+);
+
+function spbau_handle_expertise_tg_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $nonce_ok = isset($_POST["spbau_expertise_tg_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_expertise_tg_nonce"])),
+            "spbau_expertise_tg_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    $redirect = $append_fragment($redirect, "expertise");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "expertise_form_status" => "error",
+                    "expertise_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $phone_raw = isset($_POST["expertise_tg_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["expertise_tg_phone"]))
+        : "";
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if (strlen($digits) < 10) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "expertise_form_status" => "error",
+                    "expertise_form_message" =>
+                        "Укажите корректный номер телефона.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с блока "Экспертиза"',
+        "Сайт spb-au / Главная / Экспертиза",
+    );
+
+    wp_safe_redirect(
+        $append_fragment(
+            add_query_arg(
+            [
+                "expertise_form_status" => $result["ok"] ? "success" : "error",
+                "expertise_form_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+            "expertise",
+        ),
+    );
+    exit();
+}
+
+add_action(
+    "admin_post_spbau_expertise_tg_submit",
+    "spbau_handle_expertise_tg_submit",
+);
+add_action(
+    "admin_post_nopriv_spbau_expertise_tg_submit",
+    "spbau_handle_expertise_tg_submit",
+);
+
+function spbau_handle_marathon_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $nonce_ok = isset($_POST["spbau_marathon_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_marathon_nonce"])),
+            "spbau_marathon_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    $redirect = $append_fragment($redirect, "marathon");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "marathon_form_status" => "error",
+                    "marathon_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $phone_raw = isset($_POST["marathon_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["marathon_phone"]))
+        : "";
+    $agree = !empty($_POST["marathon_agree"]);
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if (!$agree) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "marathon_form_status" => "error",
+                    "marathon_form_message" =>
+                        "Нужно согласие на обработку данных.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if (strlen($digits) < 10) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "marathon_form_status" => "error",
+                    "marathon_form_message" =>
+                        "Укажите корректный номер телефона.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с формы "Марафон"',
+        "Сайт spb-au / Марафон",
+    );
+
+    if (!$result["ok"]) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "marathon_form_status" => "error",
+                    "marathon_form_message" => $result["message"],
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $target_url = "";
+    if (function_exists("get_field")) {
+        $target = get_field("marathon_button_url", "option");
+        if (is_string($target)) {
+            $target_url = trim($target);
+        }
+    }
+
+    if ($target_url !== "" && $target_url !== "#") {
+        $target_url = esc_url_raw($target_url);
+        if ($target_url !== "") {
+            wp_redirect($target_url);
+            exit();
+        }
+    }
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "marathon_form_status" => "success",
+                "marathon_form_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action("admin_post_spbau_marathon_submit", "spbau_handle_marathon_submit");
+add_action(
+    "admin_post_nopriv_spbau_marathon_submit",
+    "spbau_handle_marathon_submit",
+);
+
+function spbau_bitrix_webhook_user_id(): int
+{
+    $webhook = spbau_bitrix_webhook_url();
+    if ($webhook === "") {
+        return 0;
+    }
+
+    $path = (string) wp_parse_url($webhook, PHP_URL_PATH);
+    if (preg_match("#/rest/(\d+)/#", $path, $m)) {
+        return (int) $m[1];
+    }
+
+    return 0;
+}
+
+function spbau_bitrix_calendar_get_events(string $from_iso, string $to_iso): array
+{
+    $webhook = spbau_bitrix_webhook_url();
+    $user_id = spbau_bitrix_webhook_user_id();
+    if ($webhook === "" || $user_id <= 0) {
+        return [];
+    }
+
+    $endpoint = rtrim($webhook, "/");
+    if (stripos($endpoint, "calendar.event.get") === false) {
+        $endpoint .= "/calendar.event.get.json";
+    }
+
+    $url = add_query_arg(
+        [
+            "type" => "user",
+            "ownerId" => $user_id,
+            "from" => $from_iso,
+            "to" => $to_iso,
+        ],
+        $endpoint,
+    );
+
+    $response = wp_remote_get($url, ["timeout" => 20]);
+    if (is_wp_error($response)) {
+        return [];
+    }
+
+    $decoded = json_decode(wp_remote_retrieve_body($response), true);
+    if (!is_array($decoded) || !isset($decoded["result"]) || !is_array($decoded["result"])) {
+        return [];
+    }
+
+    return $decoded["result"];
+}
+
+function spbau_booking_times(): array
+{
+    return ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+}
+
+function spbau_booking_busy_map(array $days, array $times): array
+{
+    if (!$days || !$times) {
+        return [];
+    }
+
+    $first_iso = $days[0]["iso"] ?? "";
+    $last_iso = $days[count($days) - 1]["iso"] ?? "";
+    if ($first_iso === "" || $last_iso === "") {
+        return [];
+    }
+
+    $tz = wp_timezone();
+    $from = new DateTime($first_iso . " 00:00:00", $tz);
+    $to = new DateTime($last_iso . " 23:59:59", $tz);
+    $events = spbau_bitrix_calendar_get_events(
+        $from->format("Y-m-d\\TH:i:sP"),
+        $to->format("Y-m-d\\TH:i:sP"),
+    );
+
+    $busy = [];
+    foreach ($events as $event) {
+        $ev_from_raw = (string) ($event["DATE_FROM"] ?? "");
+        $ev_to_raw = (string) ($event["DATE_TO"] ?? "");
+        if ($ev_from_raw === "" || $ev_to_raw === "") {
+            continue;
+        }
+
+        $ev_from = DateTime::createFromFormat("d.m.Y H:i:s", $ev_from_raw, $tz);
+        $ev_to = DateTime::createFromFormat("d.m.Y H:i:s", $ev_to_raw, $tz);
+        if (!$ev_from || !$ev_to) {
+            continue;
+        }
+
+        foreach ($days as $day) {
+            $dmy = (string) ($day["date"] ?? "");
+            $iso = (string) ($day["iso"] ?? "");
+            if ($dmy === "" || $iso === "") {
+                continue;
+            }
+
+            foreach ($times as $time) {
+                $slot_from = DateTime::createFromFormat("Y-m-d H:i:s", $iso . " " . $time . ":00", $tz);
+                if (!$slot_from) {
+                    continue;
+                }
+                $slot_to = clone $slot_from;
+                $slot_to->modify("+1 hour");
+
+                if ($ev_from < $slot_to && $ev_to > $slot_from) {
+                    $busy[$dmy . "|" . $time] = true;
+                }
+            }
+        }
+    }
+
+    return $busy;
+}
+
+function spbau_booking_slot_is_busy(string $date, string $time): bool
+{
+    $tz = wp_timezone();
+    $slot_from = DateTime::createFromFormat("d.m.Y H:i:s", $date . " " . $time . ":00", $tz);
+    if (!$slot_from) {
+        return true;
+    }
+    $slot_to = clone $slot_from;
+    $slot_to->modify("+1 hour");
+
+    $events = spbau_bitrix_calendar_get_events(
+        $slot_from->format("Y-m-d\\TH:i:sP"),
+        $slot_to->format("Y-m-d\\TH:i:sP"),
+    );
+    if (!$events) {
+        return false;
+    }
+
+    foreach ($events as $event) {
+        $ev_from_raw = (string) ($event["DATE_FROM"] ?? "");
+        $ev_to_raw = (string) ($event["DATE_TO"] ?? "");
+        if ($ev_from_raw === "" || $ev_to_raw === "") {
+            continue;
+        }
+        $ev_from = DateTime::createFromFormat("d.m.Y H:i:s", $ev_from_raw, $tz);
+        $ev_to = DateTime::createFromFormat("d.m.Y H:i:s", $ev_to_raw, $tz);
+        if (!$ev_from || !$ev_to) {
+            continue;
+        }
+
+        if ($ev_from < $slot_to && $ev_to > $slot_from) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function spbau_ajax_booking_slots(): void
+{
+    $days = [];
+    for ($i = 0; $i < 7; $i++) {
+        $ts = strtotime("+" . $i . " days");
+        $days[] = [
+            "date" => date("d.m.Y", $ts),
+            "iso" => date("Y-m-d", $ts),
+        ];
+    }
+
+    $times = spbau_booking_times();
+    $busy_map = spbau_booking_busy_map($days, $times);
+    $busy_keys = array_keys($busy_map);
+
+    wp_send_json_success([
+        "busyKeys" => $busy_keys,
+        "serverTs" => current_time("timestamp"),
+    ]);
+}
+
+add_action("wp_ajax_spbau_booking_slots", "spbau_ajax_booking_slots");
+add_action("wp_ajax_nopriv_spbau_booking_slots", "spbau_ajax_booking_slots");
+
+function spbau_add_bitrix_calendar_event(
+    string $date,
+    string $time,
+    string $name,
+    string $phone,
+    string $contact_method,
+): array {
+    $webhook = spbau_bitrix_webhook_url();
+    if ($webhook === "") {
+        return ["ok" => false, "message" => "Webhook Битрикс не настроен."];
+    }
+
+    $user_id = spbau_bitrix_webhook_user_id();
+    if ($user_id <= 0) {
+        return ["ok" => false, "message" => "Не удалось определить userId webhook."];
+    }
+
+    $tz = wp_timezone();
+    $dt_start = DateTime::createFromFormat("d.m.Y H:i", $date . " " . $time, $tz);
+    if (!$dt_start) {
+        return ["ok" => false, "message" => "Некорректная дата/время слота."];
+    }
+    $dt_end = clone $dt_start;
+    $dt_end->modify("+1 hour");
+
+    $endpoint = rtrim($webhook, "/");
+    if (stripos($endpoint, "calendar.event.add") === false) {
+        $endpoint .= "/calendar.event.add.json";
+    }
+
+    $from = $dt_start->format("Y-m-d\\TH:i:sP");
+    $to = $dt_end->format("Y-m-d\\TH:i:sP");
+
+    $payload = [
+        "type" => "user",
+        "ownerId" => $user_id,
+        "name" => "Консультация: " . $name,
+        "from" => $from,
+        "to" => $to,
+        "description" =>
+            "Запись с сайта\n" .
+            "Клиент: " .
+            $name .
+            "\n" .
+            "Телефон: " .
+            $phone .
+            "\n" .
+            "Связь: " .
+            $contact_method,
+    ];
+
+    $response = wp_remote_post($endpoint, [
+        "timeout" => 20,
+        "headers" => ["Content-Type" => "application/json; charset=utf-8"],
+        "body" => wp_json_encode($payload),
+    ]);
+
+    if (is_wp_error($response)) {
+        return [
+            "ok" => false,
+            "message" =>
+                "Календарь Битрикс недоступен: " . $response->get_error_message(),
+        ];
+    }
+
+    $decoded = json_decode(wp_remote_retrieve_body($response), true);
+    if (isset($decoded["error"]) && $decoded["error"] !== "") {
+        return [
+            "ok" => false,
+            "message" =>
+                "Календарь Битрикс: " .
+                (string) ($decoded["error_description"] ?? $decoded["error"]),
+        ];
+    }
+
+    return ["ok" => true, "message" => "Событие календаря создано."];
+}
+
+function spbau_handle_booking_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $nonce_ok = isset($_POST["spbau_booking_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_booking_nonce"])),
+            "spbau_booking_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    $redirect = $append_fragment($redirect, "booking");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "booking_form_status" => "error",
+                    "booking_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $name = isset($_POST["booking_name"])
+        ? sanitize_text_field(wp_unslash($_POST["booking_name"]))
+        : "";
+    $phone_raw = isset($_POST["booking_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["booking_phone"]))
+        : "";
+    $contact = isset($_POST["booking_contact"])
+        ? sanitize_key(wp_unslash($_POST["booking_contact"]))
+        : "phone";
+    $date = isset($_POST["booking_date"])
+        ? sanitize_text_field(wp_unslash($_POST["booking_date"]))
+        : "";
+    $time = isset($_POST["booking_time"])
+        ? sanitize_text_field(wp_unslash($_POST["booking_time"]))
+        : "";
+
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if ($name === "" || strlen($digits) < 10 || $date === "" || $time === "") {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "booking_form_status" => "error",
+                    "booking_form_message" =>
+                        "Заполните имя, телефон и выберите слот.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if (spbau_booking_slot_is_busy($date, $time)) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "booking_form_status" => "error",
+                    "booking_form_message" =>
+                        "Этот слот уже занят. Выберите другое время.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $contact_map = [
+        "phone" => "Позвонить",
+        "whatsapp" => "WhatsApp",
+        "telegram" => "Telegram",
+    ];
+    $contact_text = $contact_map[$contact] ?? "Позвонить";
+
+    $lead_result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с блока "Booking"',
+        "Сайт spb-au / Главная / Booking",
+        $name,
+        "Желаемая дата: " . $date . "\n" . "Желаемое время: " . $time . "\n" . "Способ связи: " . $contact_text,
+    );
+
+    if (!$lead_result["ok"]) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "booking_form_status" => "error",
+                    "booking_form_message" => $lead_result["message"],
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $calendar_result = spbau_add_bitrix_calendar_event(
+        $date,
+        $time,
+        $name,
+        $phone,
+        $contact_text,
+    );
+
+    $success_message = "Запись принята. Скоро свяжемся с вами.";
+    if (!$calendar_result["ok"]) {
+        $success_message .= " Лид создан, но календарь не добавлен: " . $calendar_result["message"];
+    }
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "booking_form_status" => "success",
+                "booking_form_message" => $success_message,
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action("admin_post_spbau_booking_submit", "spbau_handle_booking_submit");
+add_action(
+    "admin_post_nopriv_spbau_booking_submit",
+    "spbau_handle_booking_submit",
+);
+
+function spbau_handle_faqform_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $nonce_ok = isset($_POST["spbau_faqform_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_faqform_nonce"])),
+            "spbau_faqform_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    $redirect = $append_fragment($redirect, "faq-form");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "faqform_status" => "error",
+                    "faqform_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $question = isset($_POST["faqform_question"])
+        ? sanitize_text_field(wp_unslash($_POST["faqform_question"]))
+        : "";
+    $name = isset($_POST["faqform_name"])
+        ? sanitize_text_field(wp_unslash($_POST["faqform_name"]))
+        : "";
+    $phone_raw = isset($_POST["faqform_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["faqform_phone"]))
+        : "";
+    $contact = isset($_POST["faqform_contact"])
+        ? sanitize_key(wp_unslash($_POST["faqform_contact"]))
+        : "call";
+    $agree = !empty($_POST["faqform_agree"]);
+
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if (!$agree) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "faqform_status" => "error",
+                    "faqform_message" =>
+                        "Нужно согласие на обработку данных.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if ($name === "" || strlen($digits) < 10) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "faqform_status" => "error",
+                    "faqform_message" =>
+                        "Укажите имя и корректный номер телефона.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $contact_map = [
+        "call" => "Позвоните мне",
+        "whatsapp" => "WhatsApp",
+        "telegram" => "Telegram",
+    ];
+    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+
+    $extra = "Форма: FAQ\n" . "Способ связи: " . $contact_text;
+    if ($question !== "") {
+        $extra .= "\n" . "Вопрос: " . $question;
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с формы "FAQ"',
+        "Сайт spb-au / Главная / FAQ Form",
+        $name,
+        $extra,
+    );
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "faqform_status" => $result["ok"] ? "success" : "error",
+                "faqform_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action("admin_post_spbau_faqform_submit", "spbau_handle_faqform_submit");
+add_action(
+    "admin_post_nopriv_spbau_faqform_submit",
+    "spbau_handle_faqform_submit",
+);
+
+function spbau_handle_lfbanner_submit(): void
+{
+    $nonce_ok = isset($_POST["spbau_lfbanner_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_lfbanner_nonce"])),
+            "spbau_lfbanner_submit",
+        );
+
+    $redirect = wp_get_referer() ?: home_url("/");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(add_query_arg(["lfbanner_status" => "error", "lfbanner_message" => "Ошибка безопасности формы."], $redirect));
+        exit();
+    }
+
+    $name      = isset($_POST["lf_name"])    ? sanitize_text_field(wp_unslash($_POST["lf_name"]))    : "";
+    $phone_raw = isset($_POST["lf_phone"])   ? sanitize_text_field(wp_unslash($_POST["lf_phone"]))   : "";
+    $contact   = isset($_POST["lf_contact"]) ? sanitize_key(wp_unslash($_POST["lf_contact"]))        : "call";
+    $agree     = !empty($_POST["lf_agree"]);
+
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone  = $digits !== "" ? "+" . $digits : "";
+
+    if (!$agree) {
+        wp_safe_redirect(add_query_arg(["lfbanner_status" => "error", "lfbanner_message" => "Нужно согласие на обработку данных."], $redirect));
+        exit();
+    }
+
+    if ($name === "" || strlen($digits) < 10) {
+        wp_safe_redirect(add_query_arg(["lfbanner_status" => "error", "lfbanner_message" => "Укажите имя и корректный номер телефона."], $redirect));
+        exit();
+    }
+
+    $contact_map  = ["call" => "Позвоните мне", "whatsapp" => "WhatsApp", "telegram" => "Telegram", "email" => "Email"];
+    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+    $extra        = "Форма: Программа лояльности\nСпособ связи: " . $contact_text;
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с формы "Программа лояльности"',
+        "Сайт spb-au / Программа лояльности",
+        $name,
+        $extra,
+    );
+
+    wp_safe_redirect(add_query_arg(["lfbanner_status" => $result["ok"] ? "success" : "error", "lfbanner_message" => $result["message"]], $redirect));
+    exit();
+}
+
+add_action("admin_post_spbau_lfbanner_submit",        "spbau_handle_lfbanner_submit");
+add_action("admin_post_nopriv_spbau_lfbanner_submit", "spbau_handle_lfbanner_submit");
+
+function spbau_handle_footer_form_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $nonce_ok = isset($_POST["spbau_footer_form_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_footer_form_nonce"])),
+            "spbau_footer_form_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    $redirect = $append_fragment($redirect, "site-footer");
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "footer_form_status" => "error",
+                    "footer_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $phone_raw = isset($_POST["phone"])
+        ? sanitize_text_field(wp_unslash($_POST["phone"]))
+        : "";
+    $agree = !empty($_POST["consent"]);
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if (!$agree) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "footer_form_status" => "error",
+                    "footer_form_message" =>
+                        "Нужно согласие на обработку данных.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if (strlen($digits) < 10) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "footer_form_status" => "error",
+                    "footer_form_message" =>
+                        "Укажите корректный номер телефона.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с формы "Footer"',
+        "Сайт spb-au / Footer",
+    );
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "footer_form_status" => $result["ok"] ? "success" : "error",
+                "footer_form_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action(
+    "admin_post_spbau_footer_form_submit",
+    "spbau_handle_footer_form_submit",
+);
+add_action(
+    "admin_post_nopriv_spbau_footer_form_submit",
+    "spbau_handle_footer_form_submit",
+);
+
+// ── Consult Modal Form ────────────────────────────────────────
+function spbau_handle_consultmodal_submit(): void
+{
+    $nonce_ok = isset($_POST["spbau_consultmodal_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_consultmodal_nonce"])),
+            "spbau_consultmodal_submit",
+        );
+
+    $redirect = isset($_POST["redirect_url"])
+        ? esc_url_raw(wp_unslash($_POST["redirect_url"]))
+        : "";
+    if (!$redirect) {
+        $redirect = wp_get_referer() ?: home_url("/");
+    }
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(add_query_arg(["cm_status" => "error", "cm_message" => "Ошибка безопасности формы."], $redirect));
+        exit();
+    }
+
+    $name      = isset($_POST["cm_name"])    ? sanitize_text_field(wp_unslash($_POST["cm_name"]))    : "";
+    $phone_raw = isset($_POST["cm_phone"])   ? sanitize_text_field(wp_unslash($_POST["cm_phone"]))   : "";
+    $contact   = isset($_POST["cm_contact"]) ? sanitize_key(wp_unslash($_POST["cm_contact"]))        : "call";
+    $agree     = !empty($_POST["cm_agree"]);
+
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone  = $digits !== "" ? "+" . $digits : "";
+
+    if (!$agree) {
+        wp_safe_redirect(add_query_arg(["cm_status" => "error", "cm_message" => "Нужно согласие на обработку данных."], $redirect));
+        exit();
+    }
+
+    if ($name === "" || strlen($digits) < 10) {
+        wp_safe_redirect(add_query_arg(["cm_status" => "error", "cm_message" => "Укажите имя и корректный номер телефона."], $redirect));
+        exit();
+    }
+
+    $contact_map  = ["call" => "Позвоните мне", "whatsapp" => "WhatsApp", "telegram" => "Telegram"];
+    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+    $extra        = "Форма: Бесплатная консультация (попап)\nСпособ связи: " . $contact_text;
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка на бесплатную консультацию',
+        "Сайт spb-au / Попап «Решить мою проблему»",
+        $name,
+        $extra,
+    );
+
+    wp_safe_redirect(add_query_arg(["cm_status" => $result["ok"] ? "success" : "error", "cm_message" => $result["message"]], $redirect));
+    exit();
+}
+
+add_action("admin_post_spbau_consultmodal_submit",        "spbau_handle_consultmodal_submit");
+add_action("admin_post_nopriv_spbau_consultmodal_submit", "spbau_handle_consultmodal_submit");
+
+// ── Import News ──────────────────────────────────────────────
+add_action('admin_menu', static function (): void {
+    add_management_page(
+        'Импорт новостей',
+        'Импорт новостей',
+        'manage_options',
+        'spbau-import-news',
+        'spbau_import_news_page',
+    );
+});
+
+function spbau_import_news_page(): void {
+    if (!current_user_can('manage_options')) return;
+
+    $message = '';
+
+    if (isset($_POST['spbau_import_nonce']) && wp_verify_nonce($_POST['spbau_import_nonce'], 'spbau_import')) {
+        if (!empty($_FILES['json_file']['tmp_name'])) {
+            $json = file_get_contents($_FILES['json_file']['tmp_name']);
+            $data = json_decode($json, true);
+
+            if (!$data || empty($data['items'])) {
+                $message = '<div class="notice notice-error"><p>Ошибка: неверный формат JSON.</p></div>';
+            } else {
+                $imported = 0;
+                $skipped  = 0;
+
+                foreach ($data['items'] as $item) {
+                    $slug = sanitize_title($item['slug'] ?? $item['title']);
+
+                    // Проверяем — уже есть такой пост?
+                    $existing = get_page_by_path($slug, OBJECT, 'post');
+                    if ($existing) {
+                        spbau_assign_post_categories_from_item((int) $existing->ID, $item);
+                        $skipped++;
+                        continue;
+                    }
+
+                    $post_id = wp_insert_post([
+                        'post_title'   => wp_strip_all_tags($item['title']),
+                        'post_name'    => $slug,
+                        'post_content' => $item['content_html'] ?? '',
+                        'post_status'  => 'publish',
+                        'post_type'    => 'post',
+                    ]);
+
+                    if (is_wp_error($post_id)) {
+                        continue;
+                    }
+
+                    // Загружаем картинки в галерею
+                    $all_images = array_filter(array_merge(
+                        isset($item['featured_image']) ? [$item['featured_image']] : [],
+                        $item['images'] ?? []
+                    ));
+                    $all_images = array_unique($all_images);
+
+                    $attach_ids = [];
+                    foreach ($all_images as $img_url) {
+                        $id = spbau_import_sideload_image($post_id, $img_url);
+                        if ($id) $attach_ids[] = $id;
+                    }
+                    if ($attach_ids) {
+                        update_field('article_gallery', $attach_ids, $post_id);
+                        set_post_thumbnail($post_id, $attach_ids[0]);
+                    }
+                    spbau_assign_post_categories_from_item((int) $post_id, $item);
+
+                    $imported++;
+                }
+
+                $message = "<div class='notice notice-success'><p>Импортировано: <b>{$imported}</b>. Пропущено (уже есть): <b>{$skipped}</b>.</p></div>";
+            }
+        } else {
+            $message = '<div class="notice notice-error"><p>Файл не загружен.</p></div>';
+        }
+    }
+
+    ?>
+    <div class="wrap">
+        <h1>Импорт новостей</h1>
+        <?php echo $message; ?>
+        <p>Загрузите JSON-файл со структурой <code>{"items": [...]}</code>.</p>
+        <form method="post" enctype="multipart/form-data">
+            <?php wp_nonce_field('spbau_import', 'spbau_import_nonce'); ?>
+            <table class="form-table">
+                <tr>
+                    <th><label for="json_file">JSON файл</label></th>
+                    <td><input type="file" name="json_file" id="json_file" accept=".json" required></td>
+                </tr>
+            </table>
+            <?php submit_button('Импортировать'); ?>
+        </form>
+    </div>
+    <?php
+}
+
+function spbau_assign_post_categories_from_item(int $post_id, array $item): void {
+    $category_names = [];
+    if (!empty($item['categories']) && is_array($item['categories'])) {
+        $category_names = $item['categories'];
+    } elseif (!empty($item['category']) && is_string($item['category'])) {
+        $category_names = [$item['category']];
+    }
+
+    if (!$category_names) return;
+
+    $cat_ids = [];
+    foreach ($category_names as $cat_name) {
+        $cat_name = sanitize_text_field(wp_strip_all_tags((string) $cat_name));
+        if ($cat_name === '') continue;
+
+        $term = get_term_by('name', $cat_name, 'category');
+        if ($term && !is_wp_error($term) && !empty($term->term_id)) {
+            $cat_ids[] = (int) $term->term_id;
+            continue;
+        }
+
+        $created = wp_insert_term($cat_name, 'category');
+        if (!is_wp_error($created) && !empty($created['term_id'])) {
+            $cat_ids[] = (int) $created['term_id'];
+        }
+    }
+
+    if ($cat_ids) {
+        wp_set_post_categories($post_id, array_values(array_unique($cat_ids)), false);
+    }
+}
+
+function spbau_import_sideload_image(int $post_id, string $img_url): int {
+    require_once ABSPATH . 'wp-admin/includes/image.php';
+    require_once ABSPATH . 'wp-admin/includes/file.php';
+    require_once ABSPATH . 'wp-admin/includes/media.php';
+
+    $tmp = download_url($img_url);
+    if (is_wp_error($tmp)) return 0;
+
+    $file = [
+        'name'     => basename(parse_url($img_url, PHP_URL_PATH)) ?: 'image.jpg',
+        'tmp_name' => $tmp,
+    ];
+
+    $attach_id = media_handle_sideload($file, $post_id);
+    return is_wp_error($attach_id) ? 0 : $attach_id;
+}

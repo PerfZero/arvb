@@ -1,0 +1,52 @@
+[
+  {
+    "key": "group_smi_fields",
+    "title": "Публикация в СМИ",
+    "fields": [
+      {
+        "key": "field_smi_source_name",
+        "label": "Название СМИ",
+        "name": "smi_source_name",
+        "type": "text",
+        "instructions": "Например: Газета.ру, РБК, Коммерсантъ",
+        "required": 0,
+        "placeholder": "Газета.ру"
+      },
+      {
+        "key": "field_smi_source_url",
+        "label": "Ссылка на статью",
+        "name": "smi_source_url",
+        "type": "url",
+        "instructions": "Полная ссылка на публикацию",
+        "required": 0,
+        "placeholder": "https://"
+      },
+      {
+        "key": "field_smi_source_logo",
+        "label": "Логотип СМИ",
+        "name": "smi_source_logo",
+        "type": "image",
+        "instructions": "Логотип издания (отображается в карточке)",
+        "required": 0,
+        "return_format": "array",
+        "preview_size": "medium",
+        "library": "all"
+      }
+    ],
+    "location": [
+      [
+        {
+          "param": "post_type",
+          "operator": "==",
+          "value": "smi"
+        }
+      ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "active": true
+  }
+]

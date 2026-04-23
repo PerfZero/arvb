@@ -1,0 +1,651 @@
+{
+    "key": "group_loyalty",
+    "title": "Программа лояльности",
+    "fields": [
+        {
+            "key": "field_loy_tab_hero",
+            "label": "Герой",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_loy_hero_title",
+            "label": "Заголовок",
+            "name": "loy_hero_title",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "Для синего акцента оберните нужные слова в <span class=\"loy-hero__accent\">...<\/span>",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 4,
+            "new_lines": "",
+            "default_value": "Станьте нашим <span class=\"loy-hero__accent\">официальным партнером<\/span> и получайте пассивный доход вместе с «СПбАу»",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_hero_subtitle",
+            "label": "Подзаголовок",
+            "name": "loy_hero_subtitle",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_hero_btn_text",
+            "label": "Кнопка: текст",
+            "name": "loy_hero_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Стать Партнером",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_hero_btn_url",
+            "label": "Кнопка: ссылка",
+            "name": "loy_hero_btn_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_loy_hero_tip",
+            "label": "Подсказка (рядом с кнопкой)",
+            "name": "loy_hero_tip",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_hero_image",
+            "label": "Фото (правая часть)",
+            "name": "loy_hero_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
+            "key": "field_loy_tab_earn",
+            "label": "Зарабатывайте",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_loy_earn_title",
+            "label": "Заголовок блока",
+            "name": "loy_earn_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Рекомендуя нас, вы зарабатываете",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_earn_subtitle",
+            "label": "Подзаголовок",
+            "name": "loy_earn_subtitle",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 2,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_card1_amount",
+            "label": "Карточка 1: сумма",
+            "name": "loy_card1_amount",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "+12 000₽",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card1_desc",
+            "label": "Карточка 1: описание",
+            "name": "loy_card1_desc",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_card1_btn_text",
+            "label": "Карточка 1: кнопка текст",
+            "name": "loy_card1_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Перейти к обучению",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card1_btn_url",
+            "label": "Карточка 1: кнопка ссылка",
+            "name": "loy_card1_btn_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_loy_card2_amount",
+            "label": "Карточка 2: сумма",
+            "name": "loy_card2_amount",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "+14 000₽",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card2_desc",
+            "label": "Карточка 2: описание",
+            "name": "loy_card2_desc",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_card2_btn_text",
+            "label": "Карточка 2: кнопка текст",
+            "name": "loy_card2_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Смотреть отзывы",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card2_btn_url",
+            "label": "Карточка 2: кнопка ссылка",
+            "name": "loy_card2_btn_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_loy_card3_amount",
+            "label": "Карточка 3: сумма",
+            "name": "loy_card3_amount",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "+3 000₽",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card3_desc",
+            "label": "Карточка 3: описание",
+            "name": "loy_card3_desc",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_loy_card3_btn_text",
+            "label": "Карточка 3: кнопка текст",
+            "name": "loy_card3_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Получить личную ссылку",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_card3_btn_url",
+            "label": "Карточка 3: кнопка ссылка",
+            "name": "loy_card3_btn_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+        {
+            "key": "field_loy_tab_steps",
+            "label": "Шаги",
+            "name": "",
+            "aria-label": "",
+            "type": "tab",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "placement": "top",
+            "endpoint": 0,
+            "selected": 0
+        },
+        {
+            "key": "field_loy_steps_title",
+            "label": "Заголовок (чёрный)",
+            "name": "loy_steps_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Как это работает:",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_steps_subtitle",
+            "label": "Подзаголовок (синий)",
+            "name": "loy_steps_subtitle",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "4 шага к вашему бонусу",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_steps_items",
+            "label": "Шаги",
+            "name": "loy_steps_items",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "min": 0,
+            "max": 4,
+            "button_label": "Добавить шаг",
+            "rows_per_page": 20,
+            "collapsed": "",
+            "sub_fields": [
+                {
+                    "key": "field_loy_step_title",
+                    "label": "Заголовок",
+                    "name": "step_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_loy_steps_items",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_loy_step_text",
+                    "label": "Текст",
+                    "name": "step_text",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "rows": 4,
+                    "new_lines": "",
+                    "default_value": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_loy_steps_items",
+                    "maxlength": ""
+                }
+            ]
+        },
+        {
+            "key": "field_loy_steps_btn_text",
+            "label": "Кнопка: текст",
+            "name": "loy_steps_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Стать Партнером",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_loy_steps_btn_url",
+            "label": "Кнопка: ссылка",
+            "name": "loy_steps_btn_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": ""
+        },
+
+        {"key":"field_loy_tab_growth","label":"Финансовый рост","name":"","aria-label":"","type":"tab","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"placement":"top","endpoint":0,"selected":0},
+        {"key":"field_loy_growth_title","label":"Заголовок блока","name":"loy_growth_title","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"Финансовый рост вместе с «СПБАУ»","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_growth_subtitle","label":"Подзаголовок","name":"loy_growth_subtitle","aria-label":"","type":"textarea","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"rows":2,"new_lines":"","default_value":"","placeholder":"","maxlength":""},
+
+        {"key":"field_loy_s1_title","label":"Карточка Агент: заголовок","name":"loy_s1_title","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"Статус «Агент»","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s1_sub","label":"Карточка Агент: подзаголовок","name":"loy_s1_sub","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"в рамках Программы лояльности","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s1_desc","label":"Карточка Агент: текст","name":"loy_s1_desc","aria-label":"","type":"textarea","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"rows":3,"new_lines":"","default_value":"","placeholder":"","maxlength":""},
+        {"key":"field_loy_s1_amount","label":"Карточка Агент: сумма","name":"loy_s1_amount","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"+10 000₽","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s1_btn_text","label":"Карточка Агент: кнопка текст","name":"loy_s1_btn_text","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"Перейти к обучению","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s1_btn_url","label":"Карточка Агент: кнопка ссылка","name":"loy_s1_btn_url","aria-label":"","type":"url","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"","placeholder":""},
+        {"key":"field_loy_s1_image","label":"Карточка Агент: изображение","name":"loy_s1_image","aria-label":"","type":"image","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"return_format":"array","preview_size":"medium","library":"all","min_width":0,"min_height":0,"min_size":0,"max_width":0,"max_height":0,"max_size":0,"mime_types":""},
+
+        {"key":"field_loy_s2_title","label":"Карточка Партнёр: заголовок","name":"loy_s2_title","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"Статус «Партнер»","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s2_sub","label":"Карточка Партнёр: подзаголовок","name":"loy_s2_sub","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"После прохождения бесплатного обучения","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s2_items","label":"Карточка Партнёр: список","name":"loy_s2_items","aria-label":"","type":"repeater","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"layout":"table","min":0,"max":0,"button_label":"Добавить пункт","sub_fields":[
+            {"key":"field_loy_s2_item","label":"Пункт","name":"item_text","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"","maxlength":"","placeholder":"","parent_repeater":"field_loy_s2_items"}
+        ]},
+        {"key":"field_loy_s2_amount","label":"Карточка Партнёр: сумма","name":"loy_s2_amount","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"+12 000₽","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s2_amount_desc","label":"Карточка Партнёр: подпись к сумме","name":"loy_s2_amount_desc","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"за каждого привлеченного клиента","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_s2_image","label":"Карточка Партнёр: изображение","name":"loy_s2_image","aria-label":"","type":"image","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"return_format":"array","preview_size":"medium","library":"all","min_width":0,"min_height":0,"min_size":0,"max_width":0,"max_height":0,"max_size":0,"mime_types":""},
+
+        {"key":"field_loy_vip_title","label":"VIP: заголовок","name":"loy_vip_title","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"Статус «VIP Партнер» СПБАУ","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_sub","label":"VIP: подзаголовок","name":"loy_vip_sub","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"50","class":"","id":""},"default_value":"После привлечения 6 успешных сделок","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_items","label":"VIP: список","name":"loy_vip_items","aria-label":"","type":"repeater","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"layout":"table","min":0,"max":0,"button_label":"Добавить пункт","sub_fields":[
+            {"key":"field_loy_vip_item","label":"Пункт","name":"item_text","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"","maxlength":"","placeholder":"","parent_repeater":"field_loy_vip_items"}
+        ]},
+        {"key":"field_loy_vip_amount1","label":"VIP: сумма 1","name":"loy_vip_amount1","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"25","class":"","id":""},"default_value":"+14 000₽","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_amount1_desc","label":"VIP: подпись к сумме 1","name":"loy_vip_amount1_desc","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"25","class":"","id":""},"default_value":"за каждого привлеченного клиента","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_amount2","label":"VIP: сумма 2","name":"loy_vip_amount2","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"25","class":"","id":""},"default_value":"+3 000₽","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_amount2_desc","label":"VIP: подпись к сумме 2","name":"loy_vip_amount2_desc","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"25","class":"","id":""},"default_value":"за каждого клиента, приведенного партнерами вашей сети","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_vip_image","label":"VIP: изображение","name":"loy_vip_image","aria-label":"","type":"image","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"return_format":"array","preview_size":"medium","library":"all","min_width":0,"min_height":0,"min_size":0,"max_width":0,"max_height":0,"max_size":0,"mime_types":""},
+
+        {"key":"field_loy_form_title","label":"Форма: заголовок","name":"loy_form_title","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"Получите консультацию о возможностях карьерного роста","maxlength":"","placeholder":"","prepend":"","append":""},
+        {"key":"field_loy_form_cf7","label":"Форма: шорткод CF7 (необязательно)","name":"loy_form_cf7","aria-label":"","type":"text","instructions":"Если не заполнено — используется встроенная форма","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"","maxlength":"","placeholder":"[contact-form-7 id=\"123\"]","prepend":"","append":""},
+        {"key":"field_loy_form_btn","label":"Форма: кнопка текст","name":"loy_form_btn","aria-label":"","type":"text","instructions":"","required":0,"conditional_logic":false,"wrapper":{"width":"","class":"","id":""},"default_value":"Получить консультацию","maxlength":"","placeholder":"","prepend":"","append":""}
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-loyalty.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1775149083
+}

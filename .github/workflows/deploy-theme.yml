@@ -1,0 +1,76 @@
+name: Deploy Theme (arb.devdenis.ru)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "wp-content/themes/spb-au/**"
+      - "deploy/theme/deploy-theme.sh"
+      - ".github/workflows/deploy-theme.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-arb-theme
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      DEPLOY_HOST: ${{ secrets.ARB_DEPLOY_HOST }}
+      DEPLOY_PORT: ${{ secrets.ARB_DEPLOY_PORT }}
+      DEPLOY_USER: ${{ secrets.ARB_DEPLOY_USER }}
+      DEPLOY_PASSWORD: ${{ secrets.ARB_DEPLOY_PASSWORD }}
+      WP_CONTAINER: arb_wordpress-wordpress-1
+      WP_THEME_PATH: /var/www/html/wp-content/themes/spb-au
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required secrets
+        run: |
+          set -euo pipefail
+          for var in DEPLOY_HOST DEPLOY_PORT DEPLOY_USER DEPLOY_PASSWORD; do
+            if [ -z "${!var:-}" ]; then
+              echo "Missing required secret: $var"
+              exit 1
+            fi
+          done
+
+      - name: Install sshpass
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y sshpass
+
+      - name: Add server to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -p "$DEPLOY_PORT" -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Build theme archive
+        run: |
+          COPYFILE_DISABLE=1 tar \
+            --exclude='__MACOSX' \
+            --exclude='._*' \
+            --exclude='.DS_Store' \
+            -czf /tmp/spb-au.tar.gz \
+            -C wp-content/themes spb-au
+
+      - name: Upload deployment files
+        run: |
+          SSHPASS="$DEPLOY_PASSWORD" sshpass -e scp -P "$DEPLOY_PORT" \
+            deploy/theme/deploy-theme.sh \
+            "$DEPLOY_USER@$DEPLOY_HOST:/tmp/deploy-theme.sh"
+
+          SSHPASS="$DEPLOY_PASSWORD" sshpass -e scp -P "$DEPLOY_PORT" \
+            /tmp/spb-au.tar.gz \
+            "$DEPLOY_USER@$DEPLOY_HOST:/tmp/spb-au.tar.gz"
+
+      - name: Deploy theme in container
+        run: |
+          SSHPASS="$DEPLOY_PASSWORD" sshpass -e ssh -p "$DEPLOY_PORT" "$DEPLOY_USER@$DEPLOY_HOST" \
+            "chmod +x /tmp/deploy-theme.sh && /tmp/deploy-theme.sh /tmp/spb-au.tar.gz '$WP_CONTAINER' '$WP_THEME_PATH' && rm -f /tmp/deploy-theme.sh /tmp/spb-au.tar.gz"

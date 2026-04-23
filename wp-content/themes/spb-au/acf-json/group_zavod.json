@@ -1,0 +1,448 @@
+{
+    "key": "group_zavod",
+    "title": "Завод Банкротств",
+    "fields": [
+        {
+            "key": "field_zavod_title",
+            "label": "Заголовок (HTML)",
+            "name": "zavod_title",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "default_value": "",
+            "delay": 0
+        },
+        {
+            "key": "field_zavod_description",
+            "label": "Описание (под заголовком)",
+            "name": "zavod_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "rows": 3,
+            "new_lines": "br",
+            "default_value": "",
+            "placeholder": "",
+            "maxlength": ""
+        },
+        {
+            "key": "field_zavod_badge",
+            "label": "Бейдж (hero, справа)",
+            "name": "zavod_badge",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "ЗАВОД БАНКРОТСТВ",
+            "placeholder": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_zavod_hero_image",
+            "label": "Фото в шапке",
+            "name": "zavod_hero_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
+            "key": "field_zavod_hero_btn_text",
+            "label": "Текст кнопки «Подробнее»",
+            "name": "zavod_hero_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Подробнее о «Заводе Банкротств» →",
+            "placeholder": "",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_zavod_sections",
+            "label": "Секции (стадия + шаги)",
+            "name": "zavod_sections",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "",
+            "required": false,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "layout": "block",
+            "button_label": "Добавить секцию",
+            "min": 0,
+            "max": 0,
+            "rows_per_page": 20,
+            "collapsed": "field_zavod_section_stage_title",
+            "sub_fields": [
+                {
+                    "key": "field_zavod_section_has_background",
+                    "label": "Тёмный фон",
+                    "name": "section_has_background",
+                    "aria-label": "",
+                    "type": "true_false",
+                    "instructions": "Включить тёмно-синий фон для этой секции",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": 0,
+                    "ui": 1,
+                    "parent_repeater": "field_zavod_sections",
+                    "message": "",
+                    "ui_on_text": "",
+                    "ui_off_text": ""
+                },
+                {
+                    "key": "field_zavod_section_card_position",
+                    "label": "Позиция карточки стадии",
+                    "name": "section_card_position",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Слева или справа от шагов",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "left": "Слева",
+                        "right": "Справа"
+                    },
+                    "default_value": "left",
+                    "return_format": "value",
+                    "parent_repeater": "field_zavod_sections",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0
+                },
+                {
+                    "key": "field_zavod_section_stage_icon",
+                    "label": "Иконка стадии",
+                    "name": "section_stage_icon",
+                    "aria-label": "",
+                    "type": "image",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "return_format": "array",
+                    "preview_size": "thumbnail",
+                    "library": "all",
+                    "parent_repeater": "field_zavod_sections",
+                    "min_width": 0,
+                    "min_height": 0,
+                    "min_size": 0,
+                    "max_width": 0,
+                    "max_height": 0,
+                    "max_size": 0,
+                    "mime_types": ""
+                },
+                {
+                    "key": "field_zavod_section_stage_title",
+                    "label": "Название стадии",
+                    "name": "section_stage_title",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "placeholder": "Подготовительная стадия",
+                    "parent_repeater": "field_zavod_sections",
+                    "maxlength": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_zavod_section_stage_text",
+                    "label": "Описание стадии",
+                    "name": "section_stage_text",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "rows": 4,
+                    "new_lines": "br",
+                    "default_value": "",
+                    "parent_repeater": "field_zavod_sections",
+                    "maxlength": "",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_zavod_section_stage_btn_text",
+                    "label": "Текст кнопки",
+                    "name": "section_stage_btn_text",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "Проанализировать проблему",
+                    "parent_repeater": "field_zavod_sections",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_zavod_section_stage_btn_url",
+                    "label": "Ссылка кнопки",
+                    "name": "section_stage_btn_url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "default_value": "",
+                    "parent_repeater": "field_zavod_sections",
+                    "placeholder": ""
+                },
+                {
+                    "key": "field_zavod_section_steps",
+                    "label": "Шаги (аккордеон)",
+                    "name": "section_steps",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": false,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "layout": "row",
+                    "button_label": "Добавить шаг",
+                    "parent_repeater": "field_zavod_sections",
+                    "min": 0,
+                    "max": 0,
+                    "rows_per_page": 20,
+                    "collapsed": "field_zavod_section_step_title",
+                    "sub_fields": [
+                        {
+                            "key": "field_zavod_section_step_number",
+                            "label": "Номер шага",
+                            "name": "step_number",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "Например: 00, 01, 02...",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "placeholder": "00",
+                            "parent_repeater": "field_zavod_section_steps",
+                            "default_value": "",
+                            "maxlength": "",
+                            "prepend": "",
+                            "append": ""
+                        },
+                        {
+                            "key": "field_zavod_section_step_title",
+                            "label": "Название шага",
+                            "name": "step_title",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "default_value": "",
+                            "parent_repeater": "field_zavod_section_steps",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
+                        },
+                        {
+                            "key": "field_zavod_section_step_tags",
+                            "label": "Теги шага",
+                            "name": "step_tags",
+                            "aria-label": "",
+                            "type": "repeater",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "layout": "table",
+                            "button_label": "Добавить тег",
+                            "parent_repeater": "field_zavod_section_steps",
+                            "min": 0,
+                            "max": 0,
+                            "rows_per_page": 20,
+                            "collapsed": "",
+                            "sub_fields": [
+                                {
+                                    "key": "field_zavod_section_tag_label",
+                                    "label": "Тег",
+                                    "name": "tag_label",
+                                    "aria-label": "",
+                                    "type": "text",
+                                    "instructions": "",
+                                    "required": false,
+                                    "conditional_logic": false,
+                                    "wrapper": {
+                                        "width": "",
+                                        "class": "",
+                                        "id": ""
+                                    },
+                                    "default_value": "",
+                                    "parent_repeater": "field_zavod_section_step_tags",
+                                    "maxlength": "",
+                                    "placeholder": "",
+                                    "prepend": "",
+                                    "append": ""
+                                }
+                            ]
+                        },
+                        {
+                            "key": "field_zavod_section_step_content",
+                            "label": "Содержимое шага (HTML)",
+                            "name": "step_content",
+                            "aria-label": "",
+                            "type": "wysiwyg",
+                            "instructions": "",
+                            "required": false,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "",
+                                "class": "",
+                                "id": ""
+                            },
+                            "tabs": "all",
+                            "toolbar": "basic",
+                            "media_upload": 0,
+                            "default_value": "",
+                            "delay": 0,
+                            "parent_repeater": "field_zavod_section_steps"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "page"
+            },
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-zavod.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774252842
+}

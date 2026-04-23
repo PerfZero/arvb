@@ -1,0 +1,91 @@
+{
+    "key": "group_faq_video",
+    "title": "FAQ Видео",
+    "fields": [
+        {
+            "key": "field_fv_video_file",
+            "label": "Файл видео",
+            "name": "fv_video_file",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Загрузите mp4 файл. Рекомендуется вертикальный формат 9:16.",
+            "required": 1,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "mp4,mov,webm"
+        },
+        {
+            "key": "field_fv_thumbnail",
+            "label": "Превью (обложка)",
+            "name": "fv_thumbnail",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Вертикальное изображение 9:16. Если не задано — используется миниатюра записи.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
+            "key": "field_fv_source_label",
+            "label": "Подпись источника (необязательно)",
+            "name": "fv_source_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Например: @spbau_bankrotstvo",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "@spbau_bankrotstvo",
+            "maxlength": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "faq_video"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1774268042
+}

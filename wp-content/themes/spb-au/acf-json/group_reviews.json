@@ -1,0 +1,41 @@
+{
+    "key": "group_reviews",
+    "title": "Отзывы",
+    "fields": [
+        {
+            "key": "field_reviews_title",
+            "label": "Заголовок страницы",
+            "name": "reviews_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {"width": "", "class": "", "id": ""},
+            "default_value": "Отзывы о нашей работе",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "page_template",
+                "operator": "==",
+                "value": "page-reviews.php"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1775149083
+}
