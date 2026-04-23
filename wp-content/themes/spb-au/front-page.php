@@ -153,7 +153,22 @@ $h_ticker = get_field("hero_ticker");
     $exp_quote = get_field("exp_quote");
     $exp_tg_title = get_field("exp_tg_title");
     $exp_tg_text = get_field("exp_tg_text");
-    $exp_tg_url = get_field("exp_tg_url");
+    $exp_tg_url_raw = get_field("exp_tg_url");
+    $exp_tg_url = is_string($exp_tg_url_raw)
+        ? trim($exp_tg_url_raw)
+        : "";
+    if (function_exists("spbau_normalize_telegram_url")) {
+        $exp_tg_url = spbau_normalize_telegram_url($exp_tg_url);
+    }
+    if ($exp_tg_url === "") {
+        $exp_tg_fallback_raw = get_field("marathon_button_url", "option");
+        if (is_string($exp_tg_fallback_raw)) {
+            $exp_tg_fallback_raw = trim($exp_tg_fallback_raw);
+            $exp_tg_url = function_exists("spbau_normalize_telegram_url")
+                ? spbau_normalize_telegram_url($exp_tg_fallback_raw)
+                : $exp_tg_fallback_raw;
+        }
+    }
     $exp_tg_btn = get_field("exp_tg_btn_text") ?: "Перейти в Telegram";
     $exp_tg_submit_text = $exp_tg_url ? $exp_tg_btn : "Отправить";
     $expertise_form_status = isset($_GET["expertise_form_status"])

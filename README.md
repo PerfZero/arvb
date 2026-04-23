@@ -40,7 +40,7 @@ Workflow: `.github/workflows/deploy-theme.yml`
 2. Загружает архив + `deploy/theme/deploy-theme.sh` на сервер в `/tmp`.
 3. Скрипт на сервере:
    - делает бэкап текущей темы в `/opt/backups/wp-themes/spb-au/`
-   - заменяет тему внутри контейнера `arb_wordpress-wordpress-1`
+   - заменяет тему внутри контейнера `arbdevdenis-wordpress-1`
    - выставляет права (`www-data`, `755/644`)
 
 ### Ручной запуск деплоя

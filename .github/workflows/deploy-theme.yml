@@ -24,7 +24,7 @@ jobs:
       DEPLOY_PORT: ${{ secrets.ARB_DEPLOY_PORT }}
       DEPLOY_USER: ${{ secrets.ARB_DEPLOY_USER }}
       DEPLOY_PASSWORD: ${{ secrets.ARB_DEPLOY_PASSWORD }}
-      WP_CONTAINER: arb_wordpress-wordpress-1
+      WP_CONTAINER: arbdevdenis-wordpress-1
       WP_THEME_PATH: /var/www/html/wp-content/themes/spb-au
 
     steps:

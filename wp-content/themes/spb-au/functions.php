@@ -578,6 +578,34 @@ add_action(
     "spbau_handle_smi_collab_submit",
 );
 
+function spbau_normalize_telegram_url(string $url): string
+{
+    $normalized = esc_url_raw(trim($url));
+    if ($normalized === "") {
+        return "";
+    }
+
+    $parts = wp_parse_url($normalized);
+    if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+        return "";
+    }
+
+    $scheme = strtolower((string) $parts["scheme"]);
+    if (!in_array($scheme, ["http", "https"], true)) {
+        return "";
+    }
+
+    $host = strtolower((string) $parts["host"]);
+    if (str_starts_with($host, "www.")) {
+        $host = substr($host, 4);
+    }
+    if (!in_array($host, ["t.me", "telegram.me"], true)) {
+        return "";
+    }
+
+    return $normalized;
+}
+
 function spbau_handle_expertise_tg_submit(): void
 {
     $append_fragment = static function (string $url, string $fragment): string {
@@ -633,13 +661,7 @@ function spbau_handle_expertise_tg_submit(): void
         : "";
     $digits = preg_replace("/\D+/", "", $phone_raw);
     $phone = $digits !== "" ? "+" . $digits : "";
-    $target_url = $target_raw !== "" ? esc_url_raw($target_raw) : "";
-    if ($target_url !== "") {
-        $scheme = strtolower((string) wp_parse_url($target_url, PHP_URL_SCHEME));
-        if (!in_array($scheme, ["http", "https"], true)) {
-            $target_url = "";
-        }
-    }
+    $target_url = $target_raw !== "" ? spbau_normalize_telegram_url($target_raw) : "";
 
     if (strlen($digits) < 10) {
         wp_safe_redirect(
