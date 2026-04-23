@@ -14152,6 +14152,18 @@ a.breadcrumb__item:hover {
     font-size: 24px;
 }
 
+.single-review .single-case__content {
+    gap: 20px;
+}
+
+.single-review .single-case__media {
+    border-radius: 20px;
+}
+
+.single-review .single-case__details-row {
+    align-items: flex-start;
+}
+
 .reviews-section .case-meta-row--review {
     display: block;
 }
@@ -14178,8 +14190,17 @@ a.breadcrumb__item:hover {
 }
 
 @media (max-width: 1024px) {
+    .reviews-section .case-card {
+        padding: 20px;
+        gap: 16px;
+    }
+
     .reviews-section .case-card__title {
         font-size: 28px;
+    }
+
+    .reviews-section .case-meta-row {
+        gap: 10px;
     }
 
     .reviews-section .case-meta-label,
@@ -14187,8 +14208,16 @@ a.breadcrumb__item:hover {
         font-size: 18px;
     }
 
+    .reviews-section .case-meta-label {
+        min-width: 0;
+    }
+
     .reviews-section .case-meta-row--review .case-meta-value {
         font-size: 16px;
+    }
+
+    .reviews-section .case-card__media {
+        border-radius: 16px;
     }
 }
 
@@ -14277,12 +14306,88 @@ a.breadcrumb__item:hover {
 }
 
 @media (max-width: 1024px) {
+    .single-review .single-case__details-row {
+        gap: 14px;
+    }
+
+    .single-review .single-case__photo img {
+        aspect-ratio: 16/10;
+    }
+
     .single-review__related-title {
         font-size: 28px;
     }
 }
 
 @media (max-width: 768px) {
+    .reviews-section .case-card {
+        padding: 16px;
+        border-radius: 20px;
+        gap: 14px;
+    }
+
+    .reviews-section .case-card__title {
+        font-size: 22px;
+        line-height: 126%;
+    }
+
+    .reviews-section .case-meta-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .reviews-section .case-meta-label,
+    .reviews-section .case-meta-value {
+        font-size: 15px;
+        line-height: 136%;
+    }
+
+    .reviews-section .case-card__media {
+        border-radius: 12px;
+    }
+
+    .reviews-section .case-card__photo img {
+        border-radius: 12px;
+        aspect-ratio: 16/10;
+    }
+
+    .single-review .single-case__content {
+        padding: 16px;
+        border-radius: 20px;
+        gap: 14px;
+    }
+
+    .single-review .single-case__title {
+        font-size: 22px;
+        line-height: 126%;
+    }
+
+    .single-review .single-case__media {
+        border-radius: 12px;
+    }
+
+    .single-review .case-meta-row {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .single-review .case-meta-label,
+    .single-review .case-meta-value {
+        font-size: 15px;
+        line-height: 136%;
+        min-width: 0;
+    }
+
+    .single-review .single-case__review-label {
+        font-size: 17px;
+        margin-bottom: 6px;
+    }
+
+    .single-review .single-case__review-text {
+        font-size: 15px;
+        line-height: 146%;
+    }
+
     .single-review__related {
         padding-bottom: 24px;
     }
