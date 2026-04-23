@@ -153,7 +153,7 @@ add_action("init", static function (): void {
         "public" => true,
         "has_archive" => "review",
         "show_in_rest" => true,
-        "supports" => ["title"],
+        "supports" => ["title", "thumbnail"],
         "menu_icon" => "dashicons-testimonial",
         "rewrite" => ["slug" => "review"],
     ]);

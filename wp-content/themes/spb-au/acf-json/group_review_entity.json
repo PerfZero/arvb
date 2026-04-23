@@ -156,6 +156,146 @@
             "new_lines": "br"
         },
         {
+            "key": "field_review_media_source",
+            "label": "Источник медиа",
+            "name": "review_media_source",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Выберите, что показывать в верхнем блоке: фото или видео.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "photo": "Фото",
+                "link": "Ссылка на видео",
+                "file": "Видео файл"
+            },
+            "default_value": "photo",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_review_video",
+            "label": "Видео (ссылка)",
+            "name": "review_video",
+            "aria-label": "",
+            "type": "oembed",
+            "instructions": "Вставьте ссылку на YouTube/Vimeo/Rutube, если в источнике выбрано видео ссылкой.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_review_media_source",
+                        "operator": "==",
+                        "value": "link"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "width": "",
+            "height": ""
+        },
+        {
+            "key": "field_review_video_file",
+            "label": "Видео файл",
+            "name": "review_video_file",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Загрузите видео (mp4/webm/mov), если выбран вариант «Видео файл».",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_review_media_source",
+                        "operator": "==",
+                        "value": "file"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "mp4,webm,mov"
+        },
+        {
+            "key": "field_review_media_photo",
+            "label": "Фото (верхний блок)",
+            "name": "review_media_photo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Фото для верхнего блока, если в источнике выбрано «Фото».",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_review_media_source",
+                        "operator": "==",
+                        "value": "photo"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
+            "key": "field_review_photo",
+            "label": "Фото клиента (справа)",
+            "name": "review_photo",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Фото в правой колонке карточки/страницы, как в завершённых делах.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
             "key": "field_review_text",
             "label": "Текст отзыва",
             "name": "review_text",
@@ -212,5 +352,5 @@
     "description": "",
     "show_in_rest": false,
     "display_title": "",
-    "modified": 1776977131
+    "modified": 1776978634
 }

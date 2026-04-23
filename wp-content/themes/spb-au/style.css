@@ -3978,6 +3978,12 @@ a.breadcrumb__item:hover {
     aspect-ratio: 16/9;
     border: none;
 }
+.case-card__media > img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
 .case-card__swiper .swiper-slide img {
     width: 100%;
     aspect-ratio: 16/9;
