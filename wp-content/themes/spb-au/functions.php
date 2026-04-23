@@ -136,6 +136,13 @@ add_action("init", static function (): void {
         "rewrite" => ["slug" => "case-debt-type"],
     ]);
 
+    register_taxonomy("case_creditor_type", "case", [
+        "label" => "Типы кредиторов",
+        "hierarchical" => false,
+        "show_in_rest" => true,
+        "rewrite" => ["slug" => "case-creditor-type"],
+    ]);
+
     register_post_type("faq_video", [
         "labels" => [
             "name" => "FAQ видео",

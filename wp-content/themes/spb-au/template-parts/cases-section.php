@@ -10,6 +10,10 @@ $debt_types = get_terms([
     "taxonomy" => "case_debt_type",
     "hide_empty" => false,
 ]);
+$creditor_types = get_terms([
+    "taxonomy" => "case_creditor_type",
+    "hide_empty" => false,
+]);
 $age_ranges = [
     "all" => "Все",
     "lt30" => "До 30 лет",
@@ -84,6 +88,38 @@ $i = 0;
                     <?php endforeach; ?>
                     </div>
                 </div>
+                <?php if (!empty($debt_types) && !is_wp_error($debt_types)): ?>
+                <div class="filter-group">
+                    <div class="filter-group__title">Вид долгов</div>
+                    <div class="filter-group__items">
+                        <label class="filter-radio"><input type="radio" name="debt" value="all" checked> Все</label>
+                        <?php foreach ($debt_types as $term): ?>
+                        <label class="filter-radio">
+                            <input type="radio" name="debt" value="<?php echo esc_attr(
+                                $term->slug,
+                            ); ?>">
+                            <?php echo esc_html($term->name); ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
+                <?php if (!empty($creditor_types) && !is_wp_error($creditor_types)): ?>
+                <div class="filter-group">
+                    <div class="filter-group__title">Типы кредиторов</div>
+                    <div class="filter-group__items">
+                        <label class="filter-radio"><input type="radio" name="creditorType" value="all" checked> Все</label>
+                        <?php foreach ($creditor_types as $term): ?>
+                        <label class="filter-radio">
+                            <input type="radio" name="creditorType" value="<?php echo esc_attr(
+                                $term->slug,
+                            ); ?>">
+                            <?php echo esc_html($term->name); ?>
+                        </label>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+                <?php endif; ?>
                 <?php if (!empty($problem_options)): ?>
                 <div class="filter-group">
                     <div class="filter-group__title">Проблема клиента</div>
@@ -131,6 +167,10 @@ $i = 0;
                             get_the_ID(),
                             "case_debt_type",
                         );
+                        $creditor_type_terms = get_the_terms(
+                            get_the_ID(),
+                            "case_creditor_type",
+                        );
                         $status_slugs =
                             $status_terms && !is_wp_error($status_terms)
                                 ? implode(
@@ -143,6 +183,17 @@ $i = 0;
                                 ? implode(
                                     ",",
                                     wp_list_pluck($debt_terms, "slug"),
+                                )
+                                : "all";
+                        $creditor_type_slugs =
+                            $creditor_type_terms &&
+                            !is_wp_error($creditor_type_terms)
+                                ? implode(
+                                    ",",
+                                    wp_list_pluck(
+                                        $creditor_type_terms,
+                                        "slug",
+                                    ),
                                 )
                                 : "all";
                         $hidden_class =
@@ -180,7 +231,10 @@ $i = 0;
                     data-creditors="<?php echo esc_attr($creditors_range); ?>"
                     data-problem="<?php echo esc_attr($problem_slug); ?>"
                     data-status="<?php echo esc_attr($status_slugs); ?>"
-                    data-debt="<?php echo esc_attr($debt_slugs); ?>">
+                    data-debt="<?php echo esc_attr($debt_slugs); ?>"
+                    data-creditor-type="<?php echo esc_attr(
+                        $creditor_type_slugs,
+                    ); ?>">
 
                     <h3 class="case-card__title">
                         <?php

@@ -1,17 +1,32 @@
 (function () {
-    var filters = { amount: 'all', age: 'all', creditors: 'all', problem: 'all' };
+    var filters = {
+        amount: 'all',
+        age: 'all',
+        creditors: 'all',
+        debt: 'all',
+        creditorType: 'all',
+        problem: 'all'
+    };
     var perBatch = 5;
 
     function getCards() {
         return Array.from(document.querySelectorAll('.case-card'));
     }
 
+    function hasTerm(datasetValue, selectedValue) {
+        if (selectedValue === 'all') return true;
+        if (!datasetValue || datasetValue === 'all') return false;
+        return datasetValue.split(',').indexOf(selectedValue) !== -1;
+    }
+
     function matches(card) {
         var a = filters.amount === 'all' || card.dataset.amount === filters.amount;
         var ag = filters.age === 'all' || card.dataset.age === filters.age;
         var cr = filters.creditors === 'all' || card.dataset.creditors === filters.creditors;
+        var d = hasTerm(card.dataset.debt, filters.debt);
+        var ct = hasTerm(card.dataset.creditorType, filters.creditorType);
         var p = filters.problem === 'all' || card.dataset.problem === filters.problem;
-        return a && ag && cr && p;
+        return a && ag && cr && d && ct && p;
     }
 
     function applyFilters() {
@@ -46,7 +61,14 @@
     var resetBtn = document.querySelector('.cases-reset');
     if (resetBtn) {
         resetBtn.addEventListener('click', function () {
-            filters = { amount: 'all', age: 'all', creditors: 'all', problem: 'all' };
+            filters = {
+                amount: 'all',
+                age: 'all',
+                creditors: 'all',
+                debt: 'all',
+                creditorType: 'all',
+                problem: 'all'
+            };
             document.querySelectorAll('.cases-filter input[type="radio"]').forEach(function (r) {
                 r.checked = r.value === 'all';
             });

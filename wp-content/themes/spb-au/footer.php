@@ -15,8 +15,10 @@ $footer_form_message = isset($_GET["footer_form_message"])
     <div class="footer-inner">
 
         <div class="footer-top">
-            <a href="<?php echo esc_url(home_url('/')); ?>" class="footer-logo">
-                <img src="<?php echo esc_url(get_template_directory_uri()); ?>/images/logo-white.svg"
+            <a href="<?php echo esc_url(home_url("/")); ?>" class="footer-logo">
+                <img src="<?php echo esc_url(
+                    get_template_directory_uri(),
+                ); ?>/images/logo-white.svg"
                      alt="СПБ АУ" width="140" height="52">
             </a>
         </div>
@@ -25,25 +27,25 @@ $footer_form_message = isset($_GET["footer_form_message"])
 
             <nav class="footer-col footer-nav-col">
                 <ul>
-                    <li><a href="#">Услуги</a></li>
-                    <li><a href="#">Отзывы</a></li>
-                    <li><a href="#">Завершённые дела</a></li>
-                    <li><a href="#">Завод Банкротств</a></li>
-                    <li><a href="#">Статьи</a></li>
-                    <li><a href="#">Партнёрская программа</a></li>
-                    <li><a href="#">Программа лояльности</a></li>
-                    <li><a href="#">Мы в СМИ</a></li>
+                    <li><a href="/uslugi_po_bankrotstvu">Услуги</a></li>
+                    <li><a href="">Отзывы</a></li>
+                    <li><a href="/cases/">Завершённые дела</a></li>
+                    <li><a href="/uslugi_po_bankrotstvu/">Завод Банкротств</a></li>
+                    <li><a href="/stati/">Статьи</a></li>
+                    <li><a href="/partnerskaya-programma/">Партнёрская программа</a></li>
+                    <li><a href="/programma-loyalnosti/">Программа лояльности</a></li>
+                    <li><a href="/my-v-smi/">Мы в СМИ</a></li>
                 </ul>
             </nav>
 
             <nav class="footer-col footer-nav-col">
                 <ul>
                     <li><a href="#">О компании</a></li>
-                    <li><a href="#">Контакты</a></li>
-                    <li><a href="#">Банкротство физ. лиц</a></li>
-                    <li><a href="#">Долги</a></li>
-                    <li><a href="#">Кредиты</a></li>
-                    <li><a href="#">Коллекторы</a></li>
+                    <li><a href="/kontakty/">Контакты</a></li>
+                    <li><a href="/stati/?cat=17">Банкротство физ. лиц</a></li>
+                    <li><a href="/stati/?cat=10">Долги</a></li>
+                    <li><a href="/stati/?cat=18">Кредиты</a></li>
+                    <li><a href="/stati/?cat=7">Коллекторы</a></li>
                 </ul>
             </nav>
 
@@ -101,13 +103,19 @@ $footer_form_message = isset($_GET["footer_form_message"])
                     <span class="footer-messengers-label">Наши мессенджеры:</span>
                     <div class="footer-messengers-icons">
                         <a href="#" class="messenger-btn" aria-label="Telegram">
-                            <img src="<?php echo esc_url(get_template_directory_uri()); ?>/images/icon-telegram.svg" alt="Telegram" width="44" height="44">
+                            <img src="<?php echo esc_url(
+                                get_template_directory_uri(),
+                            ); ?>/images/icon-telegram.svg" alt="Telegram" width="44" height="44">
                         </a>
                         <a href="#" class="messenger-btn" aria-label="WhatsApp">
-                            <img src="<?php echo esc_url(get_template_directory_uri()); ?>/images/icon-whatsapp.svg" alt="WhatsApp" width="44" height="44">
+                            <img src="<?php echo esc_url(
+                                get_template_directory_uri(),
+                            ); ?>/images/icon-whatsapp.svg" alt="WhatsApp" width="44" height="44">
                         </a>
                         <a href="#" class="messenger-btn" aria-label="Viber">
-                            <img src="<?php echo esc_url(get_template_directory_uri()); ?>/images/icon-viber.svg" alt="Viber" width="44" height="44">
+                            <img src="<?php echo esc_url(
+                                get_template_directory_uri(),
+                            ); ?>/images/icon-viber.svg" alt="Viber" width="44" height="44">
                         </a>
                     </div>
                 </div>
