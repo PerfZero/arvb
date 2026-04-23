@@ -3667,6 +3667,12 @@ a.breadcrumb__item:hover {
     aspect-ratio: 16/9;
     border: none;
 }
+.single-case__media > img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+}
 .single-case__swiper .swiper-slide img {
     width: 100%;
     aspect-ratio: 16/9;
