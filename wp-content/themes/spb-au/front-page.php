@@ -148,7 +148,40 @@ $h_ticker = get_field("hero_ticker");
     $exp_badge = get_field("exp_badge") ?: "ЭКСПЕРТИЗА";
     $exp_stats = get_field("exp_stats");
     $exp_video_thumb = get_field("exp_video_thumb");
-    $exp_video_url = get_field("exp_video_url");
+    $exp_video_source_raw = get_field("exp_video_source");
+    $exp_video_source = in_array($exp_video_source_raw, ["url", "file"], true)
+        ? $exp_video_source_raw
+        : "url";
+    $exp_video_url_raw = get_field("exp_video_url");
+    $exp_video_url = is_string($exp_video_url_raw)
+        ? trim($exp_video_url_raw)
+        : "";
+    $exp_video_file_raw = get_field("exp_video_file");
+    $exp_video_file_url = "";
+    if (is_array($exp_video_file_raw) && !empty($exp_video_file_raw["url"])) {
+        $exp_video_file_url = (string) $exp_video_file_raw["url"];
+    } elseif (is_string($exp_video_file_raw)) {
+        $exp_video_file_url = $exp_video_file_raw;
+    } elseif (is_numeric($exp_video_file_raw)) {
+        $video_file_attachment_url = wp_get_attachment_url(
+            (int) $exp_video_file_raw,
+        );
+        if (is_string($video_file_attachment_url)) {
+            $exp_video_file_url = $video_file_attachment_url;
+        }
+    }
+    $exp_video_file_url = esc_url_raw(trim($exp_video_file_url));
+    $exp_video_url = esc_url_raw($exp_video_url);
+    $exp_video_link = "";
+    if ($exp_video_source === "file" && $exp_video_file_url !== "") {
+        $exp_video_link = $exp_video_file_url;
+    } elseif ($exp_video_source === "url" && $exp_video_url !== "") {
+        $exp_video_link = $exp_video_url;
+    } elseif ($exp_video_file_url !== "") {
+        $exp_video_link = $exp_video_file_url;
+    } elseif ($exp_video_url !== "") {
+        $exp_video_link = $exp_video_url;
+    }
     $exp_name = get_field("exp_name");
     $exp_quote = get_field("exp_quote");
     $exp_tg_title = get_field("exp_tg_title");
@@ -222,9 +255,9 @@ $h_ticker = get_field("hero_ticker");
 
                 <!-- Video -->
                 <div class="expertise__video-wrap">
-                    <?php if ($exp_video_url): ?>
+                    <?php if ($exp_video_link): ?>
                     <a href="<?php echo esc_url(
-                        $exp_video_url,
+                        $exp_video_link,
                     ); ?>" class="expertise__video" target="_blank" rel="noopener">
                     <?php else: ?>
                     <div class="expertise__video">
@@ -243,7 +276,7 @@ $h_ticker = get_field("hero_ticker");
                                 <path d="M23 14L1 27V1L23 14Z" fill="white"/>
                             </svg>
                         </div>
-                    <?php echo $exp_video_url ? "</a>" : "</div>"; ?>
+                    <?php echo $exp_video_link ? "</a>" : "</div>"; ?>
                 </div>
 
                 <!-- About -->
