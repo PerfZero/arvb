@@ -5,6 +5,7 @@
         creditors: 'all',
         debt: 'all',
         creditorType: 'all',
+        creditor: 'all',
         problem: 'all'
     };
     var perBatch = 5;
@@ -25,8 +26,9 @@
         var cr = filters.creditors === 'all' || card.dataset.creditors === filters.creditors;
         var d = hasTerm(card.dataset.debt, filters.debt);
         var ct = hasTerm(card.dataset.creditorType, filters.creditorType);
+        var c = hasTerm(card.dataset.creditor, filters.creditor);
         var p = filters.problem === 'all' || card.dataset.problem === filters.problem;
-        return a && ag && cr && d && ct && p;
+        return a && ag && cr && d && ct && c && p;
     }
 
     function applyFilters() {
@@ -67,6 +69,7 @@
                 creditors: 'all',
                 debt: 'all',
                 creditorType: 'all',
+                creditor: 'all',
                 problem: 'all'
             };
             document.querySelectorAll('.cases-filter input[type="radio"]').forEach(function (r) {

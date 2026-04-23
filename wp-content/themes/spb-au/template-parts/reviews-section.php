@@ -21,12 +21,48 @@ $creditor_types = get_terms([
     "taxonomy" => "review_creditor_type",
     "hide_empty" => false,
 ]);
+/**
+ * @return array<int, string>
+ */
+$parse_creditors = static function (string $value): array {
+    $items = preg_split("/[\n\r,;]+/u", $value) ?: [];
+    $result = [];
+    foreach ($items as $item) {
+        $item = trim(preg_replace("/\s+/u", " ", (string) $item) ?: "");
+        if ($item === "") {
+            continue;
+        }
+        $result[] = $item;
+    }
+    return array_values(array_unique($result));
+};
 
 if (is_wp_error($debt_types) || !is_array($debt_types)) {
     $debt_types = [];
 }
 if (is_wp_error($creditor_types) || !is_array($creditor_types)) {
     $creditor_types = [];
+}
+
+$creditor_options = [];
+if (!empty($reviews->posts)) {
+    foreach ($reviews->posts as $review_post) {
+        $creditors_raw = (string) get_field(
+            "review_creditors_text",
+            $review_post->ID,
+        );
+        if ($creditors_raw === "") {
+            continue;
+        }
+        foreach ($parse_creditors($creditors_raw) as $creditor_item) {
+            $slug = sanitize_title($creditor_item);
+            if ($slug === "" || isset($creditor_options[$slug])) {
+                continue;
+            }
+            $creditor_options[$slug] = $creditor_item;
+        }
+    }
+    asort($creditor_options, SORT_NATURAL | SORT_FLAG_CASE);
 }
 
 $per_page = 5;
@@ -81,6 +117,23 @@ $i = 0;
                 </div>
             </div>
 
+            <?php if (!empty($creditor_options)): ?>
+            <div class="filter-group">
+                <div class="filter-group__title">Кредиторы</div>
+                <div class="filter-group__items">
+                    <label class="filter-radio"><input type="radio" name="creditor" value="all" checked> Все</label>
+                    <?php foreach ($creditor_options as $creditor_slug => $creditor_label): ?>
+                    <label class="filter-radio">
+                        <input type="radio" name="creditor" value="<?php echo esc_attr(
+                            $creditor_slug,
+                        ); ?>">
+                        <?php echo esc_html($creditor_label); ?>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <?php endif; ?>
+
             <button class="cases-reset">Сбросить настройки</button>
         </aside>
 
@@ -125,13 +178,35 @@ $i = 0;
                         $creditor_terms_post && !is_wp_error($creditor_terms_post)
                             ? implode(", ", wp_list_pluck($creditor_terms_post, "name"))
                             : "";
+                    $creditor_slugs = "all";
+                    if (!empty($creditors_text)) {
+                        $creditor_slug_list = [];
+                        foreach (
+                            $parse_creditors((string) $creditors_text)
+                            as $creditor_item
+                        ) {
+                            $slug = sanitize_title($creditor_item);
+                            if ($slug !== "") {
+                                $creditor_slug_list[] = $slug;
+                            }
+                        }
+                        $creditor_slug_list = array_values(
+                            array_unique($creditor_slug_list),
+                        );
+                        if (!empty($creditor_slug_list)) {
+                            $creditor_slugs = implode(",", $creditor_slug_list);
+                        }
+                    }
 
                     $hidden_class = $i > $per_page ? " case-card--hidden" : "";
                     ?>
             <article class="case-card<?php echo esc_attr($hidden_class); ?>"
                 data-amount="<?php echo esc_attr($amount_range); ?>"
                 data-debt="<?php echo esc_attr($debt_slugs); ?>"
-                data-creditor-type="<?php echo esc_attr($creditor_type_slugs); ?>">
+                data-creditor-type="<?php echo esc_attr(
+                    $creditor_type_slugs,
+                ); ?>"
+                data-creditor="<?php echo esc_attr($creditor_slugs); ?>">
 
                 <h3 class="case-card__title"><?php echo esc_html($person_name); ?></h3>
 
