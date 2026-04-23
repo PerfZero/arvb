@@ -257,7 +257,7 @@ $h_ticker = get_field("hero_ticker");
                     <?php if ($exp_video_link): ?>
                     <a href="<?php echo esc_url(
                         $exp_video_link,
-                    ); ?>" class="expertise__video" target="_blank" rel="noopener">
+                    ); ?>" class="expertise__video glightbox" data-type="video">
                     <?php else: ?>
                     <div class="expertise__video">
                     <?php endif; ?>

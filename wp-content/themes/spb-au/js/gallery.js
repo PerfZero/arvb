@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+    if (typeof GLightbox === 'function') {
+        GLightbox({ selector: '.glightbox' });
+    }
+
     var mainEl  = document.querySelector('.post-gallery__main');
     var thumbEl = document.querySelector('.post-gallery__thumbs');
     if (!mainEl) return;
-
-    GLightbox({ selector: '.glightbox' });
 
     var thumbsSwiper = null;
 
