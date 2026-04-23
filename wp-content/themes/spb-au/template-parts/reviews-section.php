@@ -168,7 +168,6 @@ $i = 0;
                     $amount_range = get_field("review_amount_range") ?: "all";
                     $debts_count = (int) get_field("review_debts_count");
                     $creditors_text = get_field("review_creditors_text");
-                    $source_url = get_field("review_source_url");
                     $media_source = (string) get_field("review_media_source");
                     $media_video = get_field("review_video");
                     $media_video_file = get_field("review_video_file");
@@ -397,9 +396,6 @@ $i = 0;
                         </div>
 
                         <a href="<?php the_permalink(); ?>" class="case-card__btn">Подробнее</a>
-                        <?php if ($source_url): ?>
-                        <a href="<?php echo esc_url($source_url); ?>" class="case-card__btn" target="_blank" rel="noopener">Открыть источник</a>
-                        <?php endif; ?>
                     </div>
 
                     <div class="case-card__photo">

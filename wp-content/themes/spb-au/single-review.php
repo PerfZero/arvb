@@ -15,7 +15,6 @@ $amount_text = (string) get_field("review_amount_text");
 $debts_count = (int) get_field("review_debts_count");
 $creditors_text = (string) get_field("review_creditors_text");
 $review_text = (string) get_field("review_text");
-$source_url = (string) get_field("review_source_url");
 $media_source = (string) get_field("review_media_source");
 $media_video = get_field("review_video");
 $media_video_file = get_field("review_video_file");
@@ -213,16 +212,10 @@ $related = new WP_Query([
                         <?php if ($review_text !== ""): ?>
                         <div class="single-case__review">
                             <p class="single-case__review-label">Текст отзыва:</p>
-                            <div class="single-case__review-text"><?php echo wp_kses_post(
+                        <div class="single-case__review-text"><?php echo wp_kses_post(
                                 wpautop($review_text),
                             ); ?></div>
                         </div>
-                        <?php endif; ?>
-
-                        <?php if ($source_url !== ""): ?>
-                        <a href="<?php echo esc_url(
-                            $source_url,
-                        ); ?>" class="case-card__btn" target="_blank" rel="noopener">Открыть источник</a>
                         <?php endif; ?>
                     </div>
 
