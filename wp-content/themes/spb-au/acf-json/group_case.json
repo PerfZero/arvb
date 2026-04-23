@@ -269,12 +269,12 @@
             ]
         },
         {
-            "key": "field_case_video",
-            "label": "Видео или фото (большой блок)",
-            "name": "case_video",
+            "key": "field_case_video_source",
+            "label": "Источник видео",
+            "name": "case_video_source",
             "aria-label": "",
-            "type": "oembed",
-            "instructions": "Вставьте ссылку на YouTube/Vimeo для видео. Если нужны картинки — используйте поле «Галерея».",
+            "type": "select",
+            "instructions": "Выберите, как добавить видео: ссылкой или файлом.",
             "required": 0,
             "conditional_logic": false,
             "wrapper": {
@@ -282,8 +282,72 @@
                 "class": "",
                 "id": ""
             },
+            "choices": {
+                "link": "Ссылка",
+                "file": "Видео файл"
+            },
+            "default_value": "link",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
+            "key": "field_case_video",
+            "label": "Видео или фото (большой блок)",
+            "name": "case_video",
+            "aria-label": "",
+            "type": "oembed",
+            "instructions": "Вставьте ссылку на YouTube/Vimeo для видео. Если нужны картинки — используйте поле «Галерея».",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_case_video_source",
+                        "operator": "!=",
+                        "value": "file"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
             "width": "",
             "height": ""
+        },
+        {
+            "key": "field_case_video_file",
+            "label": "Видео файл (если выбран файл)",
+            "name": "case_video_file",
+            "aria-label": "",
+            "type": "file",
+            "instructions": "Загрузите видео в формате mp4/webm/mov.",
+            "required": 0,
+            "conditional_logic": [
+                [
+                    {
+                        "field": "field_case_video_source",
+                        "operator": "==",
+                        "value": "file"
+                    }
+                ]
+            ],
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "library": "all",
+            "min_size": "",
+            "max_size": "",
+            "mime_types": "mp4,webm,mov"
         },
         {
             "key": "field_case_gallery",
@@ -378,5 +442,5 @@
     "description": "",
     "show_in_rest": false,
     "display_title": "",
-    "modified": 1774877507
+    "modified": 1776974807
 }

@@ -158,9 +158,28 @@ $i = 0;
                         $photo = get_field("case_photo");
                         $placeholder_photo = get_template_directory_uri() . "/images/case-placeholder.svg";
                         $docs = get_field("case_docs");
+                        $video_source = get_field("case_video_source");
                         $video = get_field("case_video");
+                        $video_file = get_field("case_video_file");
                         $gallery = get_field("case_gallery");
                         $review = get_field("case_review_text");
+                        $video_file_url = "";
+                        $video_file_type = "";
+                        if (is_array($video_file) && !empty($video_file["url"])) {
+                            $video_file_url = (string) $video_file["url"];
+                            $video_file_type = (string) ($video_file["mime_type"] ?? "");
+                        } elseif (is_numeric($video_file)) {
+                            $video_file_url = (string) wp_get_attachment_url((int) $video_file);
+                            $video_file_type = (string) get_post_mime_type((int) $video_file);
+                        } elseif (is_string($video_file) && $video_file !== "") {
+                            $video_file_url = $video_file;
+                        }
+                        if ($video_file_url !== "" && $video_file_type === "") {
+                            $video_file_type_data = wp_check_filetype($video_file_url);
+                            $video_file_type = (string) ($video_file_type_data["type"] ?? "");
+                        }
+                        $render_video_file =
+                            $video_source === "file" && $video_file_url !== "";
                         $status_terms = get_the_terms(
                             get_the_ID(),
                             "case_status",
@@ -226,7 +245,7 @@ $i = 0;
                         }
                         $problem_slug = $problem ? sanitize_title($problem) : "all";
                         ?>
-                <?php $has_media = $video || $gallery; ?>
+                <?php $has_media = $render_video_file || $video || $gallery; ?>
                 <article class="case-card<?php echo $hidden_class; ?><?php echo $has_media ? ' case-card--media' : ''; ?>"
                     data-amount="<?php echo esc_attr($amount_r); ?>"
                     data-age="<?php echo esc_attr($age_range); ?>"
@@ -250,7 +269,13 @@ $i = 0;
 
                     <?php if ($has_media): ?>
                     <div class="case-card__media">
-                        <?php if ($video): ?>
+                        <?php if ($render_video_file): ?>
+                            <div class="case-card__video">
+                                <video controls preload="metadata" playsinline>
+                                    <source src="<?php echo esc_url($video_file_url); ?>"<?php echo $video_file_type !== "" ? ' type="' . esc_attr($video_file_type) . '"' : ""; ?>>
+                                </video>
+                            </div>
+                        <?php elseif ($video): ?>
                             <div class="case-card__video"><?php echo $video; ?></div>
                         <?php elseif ($gallery): ?>
                             <div class="swiper case-card__swiper">
@@ -324,11 +349,9 @@ $i = 0;
                             <a href="<?php the_permalink(); ?>" class="case-card__btn">Смотреть полностью</a>
                         </div>
 
-                        <?php if (!$has_media): ?>
                         <div class="case-card__photo">
                             <img src="<?php echo esc_url($photo["url"] ?? $placeholder_photo); ?>" alt="<?php echo esc_attr($photo["alt"] ?? ""); ?>">
                         </div>
-                        <?php endif; ?>
                     </div>
                 </article>
                 <?php

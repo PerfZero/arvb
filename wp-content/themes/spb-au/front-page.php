@@ -187,9 +187,7 @@ $h_ticker = get_field("hero_ticker");
     $exp_tg_title = get_field("exp_tg_title");
     $exp_tg_text = get_field("exp_tg_text");
     $exp_tg_url_raw = get_field("exp_tg_url");
-    $exp_tg_url = is_string($exp_tg_url_raw)
-        ? trim($exp_tg_url_raw)
-        : "";
+    $exp_tg_url = is_string($exp_tg_url_raw) ? trim($exp_tg_url_raw) : "";
     if (function_exists("spbau_normalize_telegram_url")) {
         $exp_tg_url = spbau_normalize_telegram_url($exp_tg_url);
     }
@@ -1248,7 +1246,7 @@ $stats_cards = get_field("stats_cards") ?: []; ?>
     ]);
 
     if ($team_members->have_posts()): ?>
-    <section class="team-home">
+    <section class="team-home" id="team">
         <div class="container">
             <span class="team-home__badge">КОМАНДА</span>
             <h2 class="team-home__title">Команда<br>профессионалов</h2>
@@ -1325,7 +1323,7 @@ $stats_cards = get_field("stats_cards") ?: []; ?>
     $accordion_title = get_field("accordion_title");
     $accordion_items = get_field("accordion_items");
     if ($accordion_items): ?>
-    <section class="faq-accordion">
+    <section class="faq-accordion" id="faq">
         <div class="faq-accordion__inner">
             <?php if ($accordion_title): ?>
             <h2 class="faq-accordion__title"><?php echo wp_kses_post(

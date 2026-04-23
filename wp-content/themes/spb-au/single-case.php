@@ -4,7 +4,9 @@ if (!defined('ABSPATH')) exit;
 get_header();
 the_post();
 
+$video_source = get_field('case_video_source');
 $video       = get_field('case_video');
+$video_file  = get_field('case_video_file');
 $gallery     = get_field('case_gallery');
 $client      = get_field('case_client');
 $amount      = get_field('case_amount');
@@ -36,6 +38,23 @@ if ($case_photo_url === '') {
 if ($case_photo_alt === '') {
     $case_photo_alt = get_the_title();
 }
+$video_file_url = '';
+$video_file_type = '';
+if (is_array($video_file) && !empty($video_file['url'])) {
+    $video_file_url = (string) $video_file['url'];
+    $video_file_type = (string) ($video_file['mime_type'] ?? '');
+} elseif (is_numeric($video_file)) {
+    $video_file_url = (string) wp_get_attachment_url((int) $video_file);
+    $video_file_type = (string) get_post_mime_type((int) $video_file);
+} elseif (is_string($video_file) && $video_file !== '') {
+    $video_file_url = $video_file;
+}
+if ($video_file_url !== '' && $video_file_type === '') {
+    $video_file_type_data = wp_check_filetype($video_file_url);
+    $video_file_type = (string) ($video_file_type_data['type'] ?? '');
+}
+$render_video_file = $video_source === 'file' && $video_file_url !== '';
+$has_media = $render_video_file || !empty($video) || !empty($gallery);
 ?>
 
 <main class="single-case">
@@ -53,7 +72,13 @@ if ($case_photo_alt === '') {
             <div class="single-case__content">
                 <h2 class="single-case__title"><?php the_title(); ?></h2>
 
-                <?php if ($video): ?>
+                <?php if ($render_video_file): ?>
+                <div class="single-case__media">
+                    <video controls preload="metadata" playsinline>
+                        <source src="<?php echo esc_url($video_file_url); ?>"<?php echo $video_file_type !== '' ? ' type="' . esc_attr($video_file_type) . '"' : ''; ?>>
+                    </video>
+                </div>
+                <?php elseif ($video): ?>
                 <div class="single-case__media"><?php echo $video; ?></div>
                 <?php elseif ($gallery): ?>
                 <div class="single-case__media">
@@ -76,52 +101,61 @@ if ($case_photo_alt === '') {
                 </div>
                 <?php endif; ?>
 
-                <div class="single-case__meta">
-                    <?php if ($client): ?>
-                    <div class="case-meta-row">
-                        <span class="case-meta-label">Клиент:</span>
-                        <span class="case-meta-value"><?php echo esc_html($client); ?></span>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($amount): ?>
-                    <div class="case-meta-row">
-                        <span class="case-meta-label">Сумма:</span>
-                        <span class="case-meta-value"><?php echo esc_html($amount); ?></span>
-                    </div>
-                    <?php endif; ?>
-                    <?php if ($number): ?>
-                    <div class="case-meta-row">
-                        <span class="case-meta-label">Дело:</span>
-                        <span class="case-meta-value"><?php echo esc_html($number); ?></span>
-                    </div>
-                    <?php endif; ?>
-                </div>
-
-                <?php if ($docs): ?>
-                <div class="case-card__docs">
-                    <div class="case-docs-label">Документы:</div>
-                    <div class="case-docs-list">
-                        <?php foreach ($docs as $doc):
-                            $icon = $doc['doc_icon'];
-                            $url  = $doc['doc_url'];
-                        ?>
-                        <a href="<?php echo esc_url($url ?: '#'); ?>" class="case-doc-pill" target="_blank">
-                            <?php if ($icon): ?>
-                                <img src="<?php echo esc_url($icon['url']); ?>" alt="">
+                <div class="case-card__row single-case__details-row">
+                    <div class="case-card__body single-case__details-body">
+                        <div class="single-case__meta">
+                            <?php if ($client): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Клиент:</span>
+                                <span class="case-meta-value"><?php echo esc_html($client); ?></span>
+                            </div>
                             <?php endif; ?>
-                            <span><?php echo esc_html($doc['doc_title']); ?></span>
-                        </a>
-                        <?php endforeach; ?>
-                    </div>
-                </div>
-                <?php endif; ?>
+                            <?php if ($amount): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Сумма:</span>
+                                <span class="case-meta-value"><?php echo esc_html($amount); ?></span>
+                            </div>
+                            <?php endif; ?>
+                            <?php if ($number): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Дело:</span>
+                                <span class="case-meta-value"><?php echo esc_html($number); ?></span>
+                            </div>
+                            <?php endif; ?>
+                        </div>
 
-                <?php if ($review): ?>
-                <div class="single-case__review">
-                    <p class="single-case__review-label">Текст отзыва:</p>
-                    <div class="single-case__review-text"><?php echo wp_kses_post($review); ?></div>
+                        <?php if ($docs): ?>
+                        <div class="case-card__docs">
+                            <div class="case-docs-label">Документы:</div>
+                            <div class="case-docs-list">
+                                <?php foreach ($docs as $doc):
+                                    $icon = $doc['doc_icon'];
+                                    $url  = $doc['doc_url'];
+                                ?>
+                                <a href="<?php echo esc_url($url ?: '#'); ?>" class="case-doc-pill" target="_blank">
+                                    <?php if ($icon): ?>
+                                        <img src="<?php echo esc_url($icon['url']); ?>" alt="">
+                                    <?php endif; ?>
+                                    <span><?php echo esc_html($doc['doc_title']); ?></span>
+                                </a>
+                                <?php endforeach; ?>
+                            </div>
+                        </div>
+                        <?php endif; ?>
+
+                        <?php if ($review): ?>
+                        <div class="single-case__review">
+                            <p class="single-case__review-label">Текст отзыва:</p>
+                            <div class="single-case__review-text"><?php echo wp_kses_post($review); ?></div>
+                        </div>
+                        <?php endif; ?>
+                    </div>
+                    <?php if ($has_media): ?>
+                    <div class="case-card__photo single-case__photo">
+                        <img src="<?php echo esc_url($case_photo_url); ?>" alt="<?php echo esc_attr($case_photo_alt); ?>">
+                    </div>
+                    <?php endif; ?>
                 </div>
-                <?php endif; ?>
             </div>
 
         </div>
