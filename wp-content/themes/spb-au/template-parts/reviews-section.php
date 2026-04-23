@@ -152,7 +152,6 @@ $i = 0;
                     $amount_range = get_field("review_amount_range") ?: "all";
                     $debts_count = (int) get_field("review_debts_count");
                     $creditors_text = get_field("review_creditors_text");
-                    $review_text = get_field("review_text");
                     $source_url = get_field("review_source_url");
 
                     $debt_terms_post = get_the_terms(get_the_ID(), "review_debt_type");
@@ -248,12 +247,6 @@ $i = 0;
                             </div>
                             <?php endif; ?>
 
-                            <?php if ($review_text): ?>
-                            <div class="case-meta-row case-meta-row--review">
-                                <span class="case-meta-label">Текст отзыва:</span>
-                                <div class="case-meta-value"><?php echo wp_kses_post(wpautop($review_text)); ?></div>
-                            </div>
-                            <?php endif; ?>
                         </div>
 
                         <?php if ($source_url): ?>
