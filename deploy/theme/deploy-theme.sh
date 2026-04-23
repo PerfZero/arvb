@@ -49,7 +49,7 @@ if [[ ! -d "$TMP_DIR/$THEME_NAME" ]]; then
   exit 1
 fi
 
-# Remove macOS metadata files if they exist in archive.
+# Remove macOS metadata files if they exist in the uploaded archive.
 find "$TMP_DIR" -type d -name '__MACOSX' -prune -exec rm -rf {} +
 find "$TMP_DIR/$THEME_NAME" -type f -name '._*' -delete
 find "$TMP_DIR/$THEME_NAME" -type f -name '.DS_Store' -delete
