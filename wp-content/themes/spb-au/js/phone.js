@@ -113,6 +113,39 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function setupExpertiseTgForm() {
+        var forms = document.querySelectorAll("[data-expertise-tg-form]");
+        if (!forms.length) return;
+
+        forms.forEach(function (form) {
+            var phoneInput = form.querySelector("[data-expertise-phone]");
+            var submitButton = form.querySelector("[data-expertise-submit]");
+            if (!phoneInput || !submitButton) return;
+
+            var updateState = function () {
+                var isValid = onlyDigits(phoneInput.value).length >= 10;
+                submitButton.disabled = !isValid;
+                submitButton.classList.toggle("is-disabled", !isValid);
+                submitButton.setAttribute("aria-disabled", isValid ? "false" : "true");
+            };
+
+            phoneInput.addEventListener("input", updateState);
+            phoneInput.addEventListener("blur", updateState);
+            phoneInput.addEventListener("countrychange", updateState);
+
+            form.addEventListener("submit", function (event) {
+                if (!submitButton.disabled) return;
+                event.preventDefault();
+                updateState();
+                phoneInput.focus();
+            });
+
+            updateState();
+        });
+    }
+
+    setupExpertiseTgForm();
+
     // После серверного PRG-редиректа оставляем сообщение на странице,
     // но очищаем технические query-параметры из адресной строки.
     try {

@@ -4925,18 +4925,18 @@ a.breadcrumb__item:hover {
 .expertise__tg-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     border: 0;
     cursor: pointer;
     background: #2d6bd9;
     color: #fff;
     font-family: "Onest", sans-serif;
-    font-weight: 300;
-    font-size: 25px;
-    line-height: 112%;
+    font-weight: 500;
+    font-size: 21px;
+    line-height: 1;
     text-align: center;
-    color: #fff;
-    padding: 12px 22px;
+    padding: 16px 26px;
     border-radius: 50px;
     text-decoration: none;
     white-space: nowrap;
@@ -4944,10 +4944,23 @@ a.breadcrumb__item:hover {
     position: relative;
     z-index: 2;
     flex: 0 0 auto;
+    min-height: 58px;
 }
 
-.expertise__tg-btn:hover {
+.expertise__tg-btn img {
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.expertise__tg-btn:hover:not(:disabled) {
     background: #1a53c0;
+}
+
+.expertise__tg-btn:disabled,
+.expertise__tg-btn.is-disabled {
+    background: #9eb8e8;
+    cursor: not-allowed;
 }
 
 .expertise__tg-notice {
@@ -11664,8 +11677,9 @@ a.breadcrumb__item:hover {
         width: 100%;
         min-width: 0;
         justify-content: center;
-        font-size: 14px;
-        padding: 14px 12px;
+        font-size: 16px;
+        padding: 14px 16px;
+        min-height: 52px;
     }
 
     .homepage .problems {

@@ -155,6 +155,7 @@ $h_ticker = get_field("hero_ticker");
     $exp_tg_text = get_field("exp_tg_text");
     $exp_tg_url = get_field("exp_tg_url");
     $exp_tg_btn = get_field("exp_tg_btn_text") ?: "Перейти в Telegram";
+    $exp_tg_submit_text = $exp_tg_url ? $exp_tg_btn : "Отправить";
     $expertise_form_status = isset($_GET["expertise_form_status"])
         ? sanitize_key($_GET["expertise_form_status"])
         : "";
@@ -259,7 +260,7 @@ $h_ticker = get_field("hero_ticker");
                             $exp_tg_text,
                         ); ?></div>
                         <?php endif; ?>
-                        <form class="expertise__tg-form" action="<?php echo esc_url(
+                        <form class="expertise__tg-form" data-expertise-tg-form action="<?php echo esc_url(
                             admin_url("admin-post.php"),
                         ); ?>" method="post" novalidate>
                             <input type="hidden" name="action" value="spbau_expertise_tg_submit">
@@ -267,19 +268,19 @@ $h_ticker = get_field("hero_ticker");
                                 "spbau_expertise_tg_submit",
                                 "spbau_expertise_tg_nonce",
                             ); ?>
+                            <?php if ($exp_tg_url): ?>
+                            <input type="hidden" name="expertise_tg_target" value="<?php echo esc_url(
+                                $exp_tg_url,
+                            ); ?>">
+                            <?php endif; ?>
                             <div class="expertise__tg-actions">
-                                <input class="expertise__tg-phone" type="tel" name="expertise_tg_phone" placeholder="+7 (___)-___-__-__" required>
-                                <button type="submit" class="expertise__tg-btn">
-                                    Отправить
-                                </button>
-                                <?php if ($exp_tg_url): ?>
-                                <a href="<?php echo esc_url(
-                                    $exp_tg_url,
-                                ); ?>" class="expertise__tg-link" target="_blank" rel="noopener">
+                                <input class="expertise__tg-phone" type="tel" name="expertise_tg_phone" placeholder="+7 (___)-___-__-__" required data-expertise-phone>
+                                <button type="submit" class="expertise__tg-btn" data-expertise-submit>
+                                    <?php if ($exp_tg_url): ?>
                                     <img src="<?php echo get_template_directory_uri(); ?>/images/icon-telegram.svg" alt="" width="18" height="18">
-                                    <?php echo esc_html($exp_tg_btn); ?>
-                                </a>
-                                <?php endif; ?>
+                                    <?php endif; ?>
+                                    <?php echo esc_html($exp_tg_submit_text); ?>
+                                </button>
                             </div>
                             <?php if (
                                 $expertise_form_status &&

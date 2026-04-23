@@ -628,8 +628,18 @@ function spbau_handle_expertise_tg_submit(): void
     $phone_raw = isset($_POST["expertise_tg_phone"])
         ? sanitize_text_field(wp_unslash($_POST["expertise_tg_phone"]))
         : "";
+    $target_raw = isset($_POST["expertise_tg_target"])
+        ? sanitize_text_field(wp_unslash($_POST["expertise_tg_target"]))
+        : "";
     $digits = preg_replace("/\D+/", "", $phone_raw);
     $phone = $digits !== "" ? "+" . $digits : "";
+    $target_url = $target_raw !== "" ? esc_url_raw($target_raw) : "";
+    if ($target_url !== "") {
+        $scheme = strtolower((string) wp_parse_url($target_url, PHP_URL_SCHEME));
+        if (!in_array($scheme, ["http", "https"], true)) {
+            $target_url = "";
+        }
+    }
 
     if (strlen($digits) < 10) {
         wp_safe_redirect(
@@ -652,16 +662,31 @@ function spbau_handle_expertise_tg_submit(): void
         "Сайт spb-au / Главная / Экспертиза",
     );
 
-    wp_safe_redirect(
-        $append_fragment(
+    if (!$result["ok"]) {
+        wp_safe_redirect(
             add_query_arg(
+                [
+                    "expertise_form_status" => "error",
+                    "expertise_form_message" => $result["message"],
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if ($target_url !== "" && $target_url !== "#") {
+        wp_redirect($target_url);
+        exit();
+    }
+
+    wp_safe_redirect(
+        add_query_arg(
             [
-                "expertise_form_status" => $result["ok"] ? "success" : "error",
+                "expertise_form_status" => "success",
                 "expertise_form_message" => $result["message"],
             ],
             $redirect,
-        ),
-            "expertise",
         ),
     );
     exit();
