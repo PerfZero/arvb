@@ -265,6 +265,7 @@ $i = 0;
 
                         </div>
 
+                        <a href="<?php the_permalink(); ?>" class="case-card__btn">Подробнее</a>
                         <?php if ($source_url): ?>
                         <a href="<?php echo esc_url($source_url); ?>" class="case-card__btn" target="_blank" rel="noopener">Открыть источник</a>
                         <?php endif; ?>
