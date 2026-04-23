@@ -1,0 +1,202 @@
+<?php
+if (!defined("ABSPATH")) {
+    exit();
+}
+
+$title = $args["title"] ?? "Отзывы о нашей работе";
+
+$reviews = new WP_Query([
+    "post_type" => "review",
+    "posts_per_page" => -1,
+    "post_status" => "publish",
+    "orderby" => "date",
+    "order" => "DESC",
+]);
+
+$debt_types = get_terms([
+    "taxonomy" => "review_debt_type",
+    "hide_empty" => false,
+]);
+$creditor_types = get_terms([
+    "taxonomy" => "review_creditor_type",
+    "hide_empty" => false,
+]);
+
+if (is_wp_error($debt_types) || !is_array($debt_types)) {
+    $debt_types = [];
+}
+if (is_wp_error($creditor_types) || !is_array($creditor_types)) {
+    $creditor_types = [];
+}
+
+$per_page = 5;
+$i = 0;
+?>
+<section class="cases-section reviews-section">
+    <h2 class="cases-title"><?php echo esc_html($title); ?></h2>
+    <div class="cases-layout">
+
+        <div class="cases-filter-toggle-wrap">
+            <button class="cases-filter-toggle" type="button">Фильтры</button>
+        </div>
+
+        <div class="cases-filter-overlay"></div>
+
+        <aside class="cases-filter">
+            <button class="cases-filter-close" type="button">Закрыть</button>
+
+            <div class="filter-group">
+                <div class="filter-group__title">Сумма долга</div>
+                <div class="filter-group__items">
+                    <label class="filter-radio"><input type="radio" name="amount" value="all" checked> Все суммы</label>
+                    <label class="filter-radio"><input type="radio" name="amount" value="350-500"> 350 000–500 000 рублей</label>
+                    <label class="filter-radio"><input type="radio" name="amount" value="500-1000"> 500 000–1 000 000 рублей</label>
+                    <label class="filter-radio"><input type="radio" name="amount" value="1000plus"> Более 1 000 000 рублей</label>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-group__title">Вид долгов</div>
+                <div class="filter-group__items">
+                    <label class="filter-radio"><input type="radio" name="debt" value="all" checked> Все</label>
+                    <?php foreach ($debt_types as $term): ?>
+                    <label class="filter-radio">
+                        <input type="radio" name="debt" value="<?php echo esc_attr($term->slug); ?>">
+                        <?php echo esc_html($term->name); ?>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <div class="filter-group">
+                <div class="filter-group__title">Типы кредиторов</div>
+                <div class="filter-group__items">
+                    <label class="filter-radio"><input type="radio" name="creditorType" value="all" checked> Все</label>
+                    <?php foreach ($creditor_types as $term): ?>
+                    <label class="filter-radio">
+                        <input type="radio" name="creditorType" value="<?php echo esc_attr($term->slug); ?>">
+                        <?php echo esc_html($term->name); ?>
+                    </label>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+
+            <button class="cases-reset">Сбросить настройки</button>
+        </aside>
+
+        <div class="cases-list">
+            <?php if ($reviews->have_posts()):
+                while ($reviews->have_posts()):
+                    $reviews->the_post();
+                    $i++;
+
+                    $person_name = get_field("review_person_name");
+                    if (!$person_name) {
+                        $person_name = get_the_title();
+                    }
+
+                    $amount_text = get_field("review_amount_text");
+                    $amount_range = get_field("review_amount_range") ?: "all";
+                    $debts_count = (int) get_field("review_debts_count");
+                    $creditors_text = get_field("review_creditors_text");
+                    $review_text = get_field("review_text");
+                    $source_url = get_field("review_source_url");
+
+                    $debt_terms_post = get_the_terms(get_the_ID(), "review_debt_type");
+                    $creditor_terms_post = get_the_terms(
+                        get_the_ID(),
+                        "review_creditor_type",
+                    );
+
+                    $debt_slugs =
+                        $debt_terms_post && !is_wp_error($debt_terms_post)
+                            ? implode(",", wp_list_pluck($debt_terms_post, "slug"))
+                            : "all";
+                    $creditor_type_slugs =
+                        $creditor_terms_post && !is_wp_error($creditor_terms_post)
+                            ? implode(",", wp_list_pluck($creditor_terms_post, "slug"))
+                            : "all";
+
+                    $debt_names =
+                        $debt_terms_post && !is_wp_error($debt_terms_post)
+                            ? implode(", ", wp_list_pluck($debt_terms_post, "name"))
+                            : "";
+                    $creditor_type_names =
+                        $creditor_terms_post && !is_wp_error($creditor_terms_post)
+                            ? implode(", ", wp_list_pluck($creditor_terms_post, "name"))
+                            : "";
+
+                    $hidden_class = $i > $per_page ? " case-card--hidden" : "";
+                    ?>
+            <article class="case-card<?php echo esc_attr($hidden_class); ?>"
+                data-amount="<?php echo esc_attr($amount_range); ?>"
+                data-debt="<?php echo esc_attr($debt_slugs); ?>"
+                data-creditor-type="<?php echo esc_attr($creditor_type_slugs); ?>">
+
+                <h3 class="case-card__title"><?php echo esc_html($person_name); ?></h3>
+
+                <div class="case-card__row">
+                    <div class="case-card__body">
+                        <div class="case-card__meta">
+                            <?php if ($amount_text): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Сумма долга:</span>
+                                <span class="case-meta-value"><?php echo esc_html($amount_text); ?></span>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($debts_count > 0): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Количество долгов:</span>
+                                <span class="case-meta-value"><?php echo esc_html((string) $debts_count); ?></span>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($creditor_type_names): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Типы кредиторов:</span>
+                                <span class="case-meta-value"><?php echo esc_html($creditor_type_names); ?></span>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($debt_names): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Вид долгов:</span>
+                                <span class="case-meta-value"><?php echo esc_html($debt_names); ?></span>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($creditors_text): ?>
+                            <div class="case-meta-row">
+                                <span class="case-meta-label">Кредиторы:</span>
+                                <span class="case-meta-value"><?php echo esc_html($creditors_text); ?></span>
+                            </div>
+                            <?php endif; ?>
+
+                            <?php if ($review_text): ?>
+                            <div class="case-meta-row case-meta-row--review">
+                                <span class="case-meta-label">Текст отзыва:</span>
+                                <div class="case-meta-value"><?php echo wp_kses_post(wpautop($review_text)); ?></div>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+
+                        <?php if ($source_url): ?>
+                        <a href="<?php echo esc_url($source_url); ?>" class="case-card__btn" target="_blank" rel="noopener">Открыть источник</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </article>
+            <?php
+                endwhile;
+                wp_reset_postdata();
+            endif; ?>
+        </div>
+    </div>
+
+    <?php if ($reviews->found_posts > $per_page): ?>
+    <div class="cases-more-wrap">
+        <button class="cases-more-btn" data-shown="<?php echo esc_attr((string) $per_page); ?>">Смотреть ещё</button>
+    </div>
+    <?php endif; ?>
+</section>

@@ -14127,3 +14127,61 @@ a.breadcrumb__item:hover {
         font-size: 12px;
     }
 }
+
+/* ===== Reviews Entity ===== */
+.reviews-section .case-card__title {
+    font-size: 34px;
+}
+
+.reviews-section .case-meta-row {
+    gap: 20px;
+}
+
+.reviews-section .case-meta-label {
+    min-width: 210px;
+    font-size: 24px;
+}
+
+.reviews-section .case-meta-value {
+    font-size: 24px;
+}
+
+.reviews-section .case-meta-row--review {
+    display: block;
+}
+
+.reviews-section .case-meta-row--review .case-meta-label {
+    display: block;
+    margin-bottom: 6px;
+}
+
+.reviews-section .case-meta-row--review .case-meta-value {
+    display: block;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 150%;
+    color: #31466b;
+}
+
+.reviews-section .case-meta-row--review .case-meta-value p {
+    margin: 0 0 12px;
+}
+
+.reviews-section .case-meta-row--review .case-meta-value p:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 1024px) {
+    .reviews-section .case-card__title {
+        font-size: 28px;
+    }
+
+    .reviews-section .case-meta-label,
+    .reviews-section .case-meta-value {
+        font-size: 18px;
+    }
+
+    .reviews-section .case-meta-row--review .case-meta-value {
+        font-size: 16px;
+    }
+}

@@ -28,7 +28,7 @@ $footer_form_message = isset($_GET["footer_form_message"])
             <nav class="footer-col footer-nav-col">
                 <ul>
                     <li><a href="/uslugi_po_bankrotstvu">Услуги</a></li>
-                    <li><a href="">Отзывы</a></li>
+                    <li><a href="/reviews/">Отзывы</a></li>
                     <li><a href="/cases/">Завершённые дела</a></li>
                     <li><a href="/uslugi_po_bankrotstvu/">Завод Банкротств</a></li>
                     <li><a href="/stati/">Статьи</a></li>

@@ -143,6 +143,35 @@ add_action("init", static function (): void {
         "rewrite" => ["slug" => "case-creditor-type"],
     ]);
 
+    register_post_type("review", [
+        "labels" => [
+            "name" => "Отзывы",
+            "singular_name" => "Отзыв",
+            "add_new_item" => "Добавить отзыв",
+            "edit_item" => "Редактировать отзыв",
+        ],
+        "public" => true,
+        "has_archive" => false,
+        "show_in_rest" => true,
+        "supports" => ["title"],
+        "menu_icon" => "dashicons-testimonial",
+        "rewrite" => ["slug" => "review"],
+    ]);
+
+    register_taxonomy("review_debt_type", "review", [
+        "label" => "Вид долгов",
+        "hierarchical" => false,
+        "show_in_rest" => true,
+        "rewrite" => ["slug" => "review-debt-type"],
+    ]);
+
+    register_taxonomy("review_creditor_type", "review", [
+        "label" => "Типы кредиторов",
+        "hierarchical" => false,
+        "show_in_rest" => true,
+        "rewrite" => ["slug" => "review-creditor-type"],
+    ]);
+
     register_post_type("faq_video", [
         "labels" => [
             "name" => "FAQ видео",
@@ -1772,4 +1801,592 @@ function spbau_import_sideload_image(int $post_id, string $img_url): int {
 
     $attach_id = media_handle_sideload($file, $post_id);
     return is_wp_error($attach_id) ? 0 : $attach_id;
+}
+
+// ── Import Reviews (CSV) ─────────────────────────────────────
+add_action("admin_menu", static function (): void {
+    add_submenu_page(
+        "edit.php?post_type=review",
+        "Импорт отзывов",
+        "Импорт отзывов",
+        "manage_options",
+        "spbau-import-reviews",
+        "spbau_import_reviews_page",
+    );
+});
+
+function spbau_import_reviews_page(): void
+{
+    if (!current_user_can("manage_options")) {
+        return;
+    }
+
+    $message = "";
+
+    if (
+        isset($_POST["spbau_import_reviews_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(
+                wp_unslash($_POST["spbau_import_reviews_nonce"]),
+            ),
+            "spbau_import_reviews",
+        )
+    ) {
+        if (empty($_FILES["csv_file"]["tmp_name"])) {
+            $message =
+                '<div class="notice notice-error"><p>Файл CSV не загружен.</p></div>';
+        } else {
+            $rows = spbau_reviews_read_csv_rows(
+                (string) $_FILES["csv_file"]["tmp_name"],
+            );
+            if (empty($rows)) {
+                $message =
+                    '<div class="notice notice-error"><p>CSV пустой или поврежден.</p></div>';
+            } else {
+                $imported = 0;
+                $updated = 0;
+                $errors = 0;
+                $fetched_text = 0;
+
+                foreach ($rows as $row) {
+                    $person_name = sanitize_text_field(
+                        (string) ($row["ФИО"] ?? ""),
+                    );
+                    if ($person_name === "") {
+                        continue;
+                    }
+
+                    $source_url = esc_url_raw(
+                        (string) ($row["Ссылка на текст отзыва"] ?? ""),
+                    );
+                    $amount_text = sanitize_text_field(
+                        (string) ($row["Сумма долга"] ?? ""),
+                    );
+                    $debts_count = spbau_reviews_parse_int(
+                        (string) ($row["Количество долгов"] ?? ""),
+                    );
+                    $creditors_text = sanitize_textarea_field(
+                        (string) ($row["Кредиторы"] ?? ""),
+                    );
+                    $debt_text = sanitize_textarea_field(
+                        (string) ($row["Вид долгов"] ?? ""),
+                    );
+                    $review_text = (string) ($row["Текст отзыва"] ?? "");
+
+                    if ($review_text === "" && $source_url !== "") {
+                        $review_text = spbau_reviews_fetch_google_doc_text(
+                            $source_url,
+                        );
+                        if ($review_text !== "") {
+                            $fetched_text++;
+                        }
+                    }
+
+                    $amount_data = spbau_reviews_parse_amount($amount_text);
+                    $amount_min = $amount_data["min"];
+                    $amount_max = $amount_data["max"];
+                    $amount_range = $amount_data["range"];
+
+                    $post_id = 0;
+                    if ($source_url !== "") {
+                        $existing_ids = get_posts([
+                            "post_type" => "review",
+                            "post_status" => "any",
+                            "numberposts" => 1,
+                            "fields" => "ids",
+                            "meta_key" => "review_source_url",
+                            "meta_value" => $source_url,
+                        ]);
+                        if (!empty($existing_ids)) {
+                            $post_id = (int) $existing_ids[0];
+                        }
+                    }
+
+                    if ($post_id > 0) {
+                        $result = wp_update_post([
+                            "ID" => $post_id,
+                            "post_title" => $person_name,
+                            "post_status" => "publish",
+                        ], true);
+                        if (is_wp_error($result)) {
+                            $errors++;
+                            continue;
+                        }
+                        $updated++;
+                    } else {
+                        $result = wp_insert_post([
+                            "post_type" => "review",
+                            "post_title" => $person_name,
+                            "post_status" => "publish",
+                        ], true);
+                        if (is_wp_error($result)) {
+                            $errors++;
+                            continue;
+                        }
+                        $post_id = (int) $result;
+                        $imported++;
+                    }
+
+                    spbau_reviews_update_meta($post_id, "review_person_name", $person_name);
+                    spbau_reviews_update_meta($post_id, "review_amount_text", $amount_text);
+                    spbau_reviews_update_meta($post_id, "review_amount_min", $amount_min);
+                    spbau_reviews_update_meta($post_id, "review_amount_max", $amount_max);
+                    spbau_reviews_update_meta($post_id, "review_amount_range", $amount_range);
+                    spbau_reviews_update_meta($post_id, "review_debts_count", $debts_count);
+                    spbau_reviews_update_meta($post_id, "review_creditors_text", $creditors_text);
+                    spbau_reviews_update_meta($post_id, "review_text", $review_text);
+                    spbau_reviews_update_meta($post_id, "review_source_url", $source_url);
+
+                    $debt_terms = [];
+                    foreach (spbau_reviews_split_values($debt_text) as $item) {
+                        $normalized_debt = spbau_reviews_normalize_debt_label($item);
+                        if ($normalized_debt !== "") {
+                            $debt_terms[] = $normalized_debt;
+                        }
+                    }
+                    if (!empty($debt_terms)) {
+                        wp_set_object_terms(
+                            $post_id,
+                            array_values(array_unique($debt_terms)),
+                            "review_debt_type",
+                            false,
+                        );
+                    } else {
+                        wp_set_object_terms($post_id, [], "review_debt_type", false);
+                    }
+
+                    $creditor_types = spbau_reviews_detect_creditor_types(
+                        $creditors_text,
+                    );
+                    if (!empty($creditor_types)) {
+                        wp_set_object_terms(
+                            $post_id,
+                            array_values(array_unique($creditor_types)),
+                            "review_creditor_type",
+                            false,
+                        );
+                    } else {
+                        wp_set_object_terms(
+                            $post_id,
+                            ["Прочие"],
+                            "review_creditor_type",
+                            false,
+                        );
+                    }
+                }
+
+                $message =
+                    "<div class='notice notice-success'><p>" .
+                    "Создано: <b>{$imported}</b>, обновлено: <b>{$updated}</b>, " .
+                    "ошибок: <b>{$errors}</b>, подтянуто текстов из Google Docs: <b>{$fetched_text}</b>." .
+                    "</p></div>";
+            }
+        }
+    }
+    ?>
+    <div class="wrap">
+        <h1>Импорт отзывов (CSV)</h1>
+        <?php echo $message; ?>
+        <p>Ожидаемые колонки: <code>Ссылка на текст отзыва, ФИО, Сумма долга, Количество долгов, Кредиторы, Вид долгов, Текст отзыва</code>.</p>
+        <form method="post" enctype="multipart/form-data">
+            <?php wp_nonce_field(
+                "spbau_import_reviews",
+                "spbau_import_reviews_nonce",
+            ); ?>
+            <table class="form-table">
+                <tr>
+                    <th><label for="csv_file">CSV файл</label></th>
+                    <td><input type="file" name="csv_file" id="csv_file" accept=".csv,text/csv" required></td>
+                </tr>
+            </table>
+            <?php submit_button("Импортировать отзывы"); ?>
+        </form>
+    </div>
+    <?php
+}
+
+function spbau_reviews_update_meta(int $post_id, string $field_name, $value): void
+{
+    if (function_exists("update_field")) {
+        update_field($field_name, $value, $post_id);
+        return;
+    }
+    update_post_meta($post_id, $field_name, $value);
+}
+
+function spbau_reviews_read_csv_rows(string $path): array
+{
+    $raw = @file_get_contents($path);
+    if ($raw === false || $raw === "") {
+        return [];
+    }
+
+    if (function_exists("mb_detect_encoding")) {
+        $encoding = mb_detect_encoding(
+            $raw,
+            ["UTF-8", "Windows-1251", "CP1251", "ISO-8859-1"],
+            true,
+        );
+        if ($encoding && strtoupper($encoding) !== "UTF-8") {
+            $raw = mb_convert_encoding($raw, "UTF-8", $encoding);
+        }
+    }
+    $raw = preg_replace("/^\xEF\xBB\xBF/", "", $raw);
+    if (!is_string($raw)) {
+        return [];
+    }
+
+    $first_line_end = strcspn($raw, "\r\n");
+    $first_line = substr($raw, 0, $first_line_end);
+    $candidates = [",", ";", "\t"];
+    $delimiter = ",";
+    $max_count = -1;
+    foreach ($candidates as $candidate) {
+        $count = substr_count($first_line, $candidate);
+        if ($count > $max_count) {
+            $max_count = $count;
+            $delimiter = $candidate;
+        }
+    }
+
+    $stream = fopen("php://temp", "r+");
+    if ($stream === false) {
+        return [];
+    }
+    fwrite($stream, $raw);
+    rewind($stream);
+
+    $header = fgetcsv($stream, 0, $delimiter);
+    if (!is_array($header)) {
+        fclose($stream);
+        return [];
+    }
+    $header = array_map(
+        static function ($value) {
+            return trim((string) $value);
+        },
+        $header,
+    );
+
+    $rows = [];
+    while (($row = fgetcsv($stream, 0, $delimiter)) !== false) {
+        $has_non_empty = false;
+        foreach ($row as $cell) {
+            if (trim((string) $cell) !== "") {
+                $has_non_empty = true;
+                break;
+            }
+        }
+        if (!$has_non_empty) {
+            continue;
+        }
+
+        $row = array_pad($row, count($header), "");
+        $assoc = array_combine($header, array_slice($row, 0, count($header)));
+        if (is_array($assoc)) {
+            $rows[] = $assoc;
+        }
+    }
+    fclose($stream);
+
+    return $rows;
+}
+
+function spbau_reviews_parse_int(string $value): int
+{
+    if (preg_match("/\d+/", $value, $m)) {
+        return (int) $m[0];
+    }
+    return 0;
+}
+
+function spbau_reviews_split_values(string $value): array
+{
+    $value = trim($value);
+    if ($value === "") {
+        return [];
+    }
+    $parts = preg_split(
+        "/\s*(?:\r\n|\r|\n|,|;|\+|\/|\\\\|\s+и\s+)\s*/iu",
+        $value,
+    );
+    if (!is_array($parts)) {
+        return [];
+    }
+    $result = [];
+    foreach ($parts as $part) {
+        $part = trim($part, " \t\n\r\0\x0B\"'()[]{}.");
+        if ($part !== "" && !in_array($part, $result, true)) {
+            $result[] = $part;
+        }
+    }
+    return $result;
+}
+
+function spbau_reviews_normalize_debt_label(string $value): string
+{
+    $raw = trim($value);
+    if ($raw === "") {
+        return "";
+    }
+    $lc = spbau_reviews_lower($raw);
+    $lc = str_replace("ё", "е", $lc);
+
+    if (strpos($lc, "ипотек") !== false) {
+        return "Ипотека";
+    }
+    if (strpos($lc, "автокредит") !== false) {
+        return "Автокредит";
+    }
+    if (strpos($lc, "микрозайм") !== false || strpos($lc, "мфо") !== false) {
+        return "Микрозаймы";
+    }
+    if (
+        (strpos($lc, "кредит") !== false && strpos($lc, "карт") !== false) ||
+        strpos($lc, "кредитная карта") !== false ||
+        strpos($lc, "кредитна карта") !== false
+    ) {
+        return "Кредитные карты";
+    }
+    if (
+        strpos($lc, "потреб") !== false ||
+        in_array($lc, ["кредиты", "потребительский"], true)
+    ) {
+        return "Потребительские кредиты";
+    }
+    if (strpos($lc, "рассроч") !== false) {
+        return "Рассрочка";
+    }
+    if (strpos($lc, "налог") !== false) {
+        return "Налоговая задолженность";
+    }
+    if (strpos($lc, "жкх") !== false || strpos($lc, "жку") !== false) {
+        return "Задолженность по ЖКХ";
+    }
+    if (strpos($lc, "поручител") !== false) {
+        return "Поручительство";
+    }
+    if (strpos($lc, "мошенн") !== false) {
+        return "Мошеннические кредиты";
+    }
+    if (strpos($lc, "строительств") !== false) {
+        return "Кредит на строительство";
+    }
+
+    return spbau_reviews_title($raw);
+}
+
+function spbau_reviews_detect_creditor_types(string $creditors_text): array
+{
+    $types = [];
+    foreach (spbau_reviews_split_values($creditors_text) as $item) {
+        $lc = spbau_reviews_lower($item);
+        $lc = str_replace(["ё", "«", "»", '"', "'"], ["е", "", "", "", ""], $lc);
+
+        if (
+            strpos($lc, "мфо") !== false ||
+            strpos($lc, "микрозайм") !== false ||
+            strpos($lc, "корона") !== false ||
+            strpos($lc, "быстрозайм") !== false ||
+            strpos($lc, "турбозайм") !== false ||
+            strpos($lc, "аденьги") !== false
+        ) {
+            $types[] = "МФО";
+            continue;
+        }
+
+        if (
+            (strpos($lc, "пко") !== false ||
+                strpos($lc, "коллект") !== false ||
+                strpos($lc, "агентств") !== false ||
+                strpos($lc, "авд") !== false ||
+                strpos($lc, "цду") !== false ||
+                strpos($lc, "траст") !== false) &&
+            strpos($lc, "банк") === false
+        ) {
+            $types[] = "Коллекторы";
+            continue;
+        }
+
+        if (strpos($lc, "жкх") !== false || strpos($lc, "жку") !== false) {
+            $types[] = "ЖКХ";
+            continue;
+        }
+
+        if (strpos($lc, "фнс") !== false || strpos($lc, "налог") !== false) {
+            $types[] = "Налоговая";
+            continue;
+        }
+
+        if (
+            strpos($lc, "сбер") !== false ||
+            strpos($lc, "тинь") !== false ||
+            strpos($lc, "т-банк") !== false ||
+            strpos($lc, "тбанк") !== false ||
+            strpos($lc, "альфа") !== false ||
+            strpos($lc, "совком") !== false ||
+            strpos($lc, "втб") !== false ||
+            strpos($lc, "уралсиб") !== false ||
+            strpos($lc, "мтс") !== false ||
+            strpos($lc, "почта") !== false ||
+            strpos($lc, "газпром") !== false ||
+            strpos($lc, "райф") !== false ||
+            strpos($lc, "ренес") !== false ||
+            strpos($lc, "русск") !== false ||
+            strpos($lc, "отп") !== false ||
+            strpos($lc, "азиат") !== false ||
+            strpos($lc, "санкт") !== false ||
+            strpos($lc, "озон") !== false ||
+            strpos($lc, "яндекс") !== false ||
+            strpos($lc, "банк") !== false
+        ) {
+            $types[] = "Банки";
+            continue;
+        }
+
+        $types[] = "Прочие";
+    }
+
+    $types = array_values(array_unique($types));
+    if (empty($types)) {
+        return ["Прочие"];
+    }
+    return $types;
+}
+
+function spbau_reviews_parse_amount(string $value): array
+{
+    $value = trim(spbau_reviews_lower($value));
+    if ($value === "") {
+        return ["min" => 0, "max" => 0, "range" => "all"];
+    }
+
+    $value = str_replace(["–", "—"], "-", $value);
+
+    $min = 0;
+    $max = 0;
+
+    if (strpos($value, "-") !== false) {
+        $parts = array_values(array_filter(array_map("trim", explode("-", $value))));
+        if (count($parts) >= 2) {
+            $n1 = spbau_reviews_parse_amount_part($parts[0]);
+            $n2 = spbau_reviews_parse_amount_part($parts[1]);
+            if ($n1 > 0 && $n2 > 0) {
+                $min = min($n1, $n2);
+                $max = max($n1, $n2);
+            }
+        }
+    }
+
+    if ($min === 0 || $max === 0) {
+        $single = spbau_reviews_parse_amount_part($value);
+        if ($single > 0) {
+            $min = $single;
+            $max = $single;
+        }
+    }
+
+    $range = "all";
+    if ($min > 0 || $max > 0) {
+        if ($max >= 350000 && $min <= 500000) {
+            $range = "350-500";
+        } elseif ($max >= 500000 && $min <= 1000000) {
+            $range = "500-1000";
+        } elseif ($max > 1000000 || $min > 1000000) {
+            $range = "1000plus";
+        }
+    }
+
+    return ["min" => $min, "max" => $max, "range" => $range];
+}
+
+function spbau_reviews_parse_amount_part(string $value): int
+{
+    $value = spbau_reviews_lower($value);
+    $value = str_replace(["–", "—"], "-", $value);
+
+    $multiplier = 1;
+    if (
+        strpos($value, "млн") !== false ||
+        strpos($value, "миллион") !== false
+    ) {
+        $multiplier = 1000000;
+    } elseif (
+        strpos($value, "тыс") !== false ||
+        strpos($value, "т.р") !== false ||
+        strpos($value, "тр") !== false ||
+        preg_match("/\d+\s*к/u", $value)
+    ) {
+        $multiplier = 1000;
+    }
+
+    if (!preg_match("/\d[\d\s\.,]*/u", $value, $m)) {
+        return 0;
+    }
+    $token = str_replace(" ", "", (string) $m[0]);
+    if (substr_count($token, ".") >= 2 && strpos($token, ",") === false) {
+        $token = str_replace(".", "", $token);
+    }
+    $token = str_replace(",", ".", $token);
+    $number = (float) $token;
+    if ($number <= 0) {
+        return 0;
+    }
+
+    if ($multiplier > 1) {
+        return (int) round($number * $multiplier);
+    }
+    return (int) round($number);
+}
+
+function spbau_reviews_fetch_google_doc_text(string $url): string
+{
+    $url = trim($url);
+    if ($url === "") {
+        return "";
+    }
+    if (!preg_match("#/document/d/([a-zA-Z0-9_-]+)#", $url, $m)) {
+        return "";
+    }
+    $doc_id = $m[1];
+    $export_url = "https://docs.google.com/document/d/" . $doc_id . "/export?format=txt";
+
+    $response = wp_remote_get($export_url, [
+        "timeout" => 20,
+        "headers" => ["User-Agent" => "Mozilla/5.0"],
+    ]);
+    if (is_wp_error($response)) {
+        return "";
+    }
+    $code = (int) wp_remote_retrieve_response_code($response);
+    if ($code < 200 || $code >= 300) {
+        return "";
+    }
+    $body = (string) wp_remote_retrieve_body($response);
+    if ($body === "") {
+        return "";
+    }
+    $probe = ltrim(spbau_reviews_lower(substr($body, 0, 512)));
+    if (strpos($probe, "<html") === 0 || strpos($probe, "<!doctype html") === 0) {
+        return "";
+    }
+    $body = preg_replace("/\r\n|\r/u", "\n", $body);
+    $body = preg_replace("/\n{3,}/u", "\n\n", (string) $body);
+    return trim((string) $body);
+}
+
+function spbau_reviews_lower(string $value): string
+{
+    if (function_exists("mb_strtolower")) {
+        return mb_strtolower($value, "UTF-8");
+    }
+    return strtolower($value);
+}
+
+function spbau_reviews_title(string $value): string
+{
+    if (function_exists("mb_convert_case")) {
+        return mb_convert_case($value, MB_CASE_TITLE, "UTF-8");
+    }
+    return ucwords(strtolower($value));
 }

@@ -28,7 +28,7 @@ if (!defined("ABSPATH")) {
                 "fallback_cb" => static function () {
                     echo '<ul class="nav-list">
                         <li><a href="#">Услуги по банкротству</a></li>
-                        <li><a href="#">Отзывы и кейсы</a></li>
+                        <li><a href="/reviews/">Отзывы и кейсы</a></li>
                         <li><a href="#">Завод банкротства</a></li>
                         <li><a href="#">Статьи</a></li>
                         <li><a href="#">Контакты</a></li>
@@ -98,7 +98,7 @@ if (!defined("ABSPATH")) {
                 "fallback_cb"    => static function () {
                     echo '<ul class="mobile-nav-list">
                         <li><a href="#">Услуги по банкротству</a></li>
-                        <li><a href="#">Отзывы и кейсы</a></li>
+                        <li><a href="/reviews/">Отзывы и кейсы</a></li>
                         <li><a href="#">Завод банкротства</a></li>
                         <li><a href="#">Статьи</a></li>
                         <li><a href="#">Контакты</a></li>
@@ -113,4 +113,3 @@ if (!defined("ABSPATH")) {
         </div>
     </div>
 </div>
-

@@ -14,10 +14,8 @@ $title = get_field('reviews_title') ?: 'Отзывы о нашей работе'
 
         <?php get_template_part('template-parts/breadcrumb'); ?>
 
-        <?php get_template_part('template-parts/faq-vid', null, [
+        <?php get_template_part('template-parts/reviews-section', null, [
             'title'    => $title,
-            'badge'    => null,
-            'subtitle' => null,
         ]); ?>
 
     </div>
