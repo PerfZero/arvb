@@ -168,9 +168,6 @@ $i = 0;
                     $amount_range = get_field("review_amount_range") ?: "all";
                     $debts_count = (int) get_field("review_debts_count");
                     $creditors_text = get_field("review_creditors_text");
-                    $media_source = (string) get_field("review_media_source");
-                    $media_video = get_field("review_video");
-                    $media_video_file = get_field("review_video_file");
                     $media_photo = get_field("review_media_photo");
                     $review_photo = get_field("review_photo");
 
@@ -180,7 +177,14 @@ $i = 0;
 
                     $review_photo_url = "";
                     $review_photo_alt = "";
-                    if (is_array($review_photo) && !empty($review_photo["url"])) {
+                    if (is_array($media_photo) && !empty($media_photo["url"])) {
+                        $review_photo_url = (string) $media_photo["url"];
+                        $review_photo_alt = (string) ($media_photo["alt"] ?? "");
+                    } elseif (is_numeric($media_photo)) {
+                        $review_photo_url = (string) wp_get_attachment_url(
+                            (int) $media_photo,
+                        );
+                    } elseif (is_array($review_photo) && !empty($review_photo["url"])) {
                         $review_photo_url = (string) $review_photo["url"];
                         $review_photo_alt = (string) ($review_photo["alt"] ?? "");
                     } elseif (is_numeric($review_photo)) {
@@ -207,45 +211,6 @@ $i = 0;
                     }
                     if ($review_photo_alt === "") {
                         $review_photo_alt = $person_name;
-                    }
-
-                    $media_photo_url = "";
-                    $media_photo_alt = "";
-                    if (is_array($media_photo) && !empty($media_photo["url"])) {
-                        $media_photo_url = (string) $media_photo["url"];
-                        $media_photo_alt = (string) ($media_photo["alt"] ?? "");
-                    } elseif (is_numeric($media_photo)) {
-                        $media_photo_url = (string) wp_get_attachment_url(
-                            (int) $media_photo,
-                        );
-                    }
-
-                    $video_file_url = "";
-                    $video_file_type = "";
-                    if (
-                        is_array($media_video_file) &&
-                        !empty($media_video_file["url"])
-                    ) {
-                        $video_file_url = (string) $media_video_file["url"];
-                        $video_file_type = (string) ($media_video_file["mime_type"] ??
-                            "");
-                    } elseif (is_numeric($media_video_file)) {
-                        $video_file_url = (string) wp_get_attachment_url(
-                            (int) $media_video_file,
-                        );
-                        $video_file_type = (string) get_post_mime_type(
-                            (int) $media_video_file,
-                        );
-                    } elseif (
-                        is_string($media_video_file) &&
-                        $media_video_file !== ""
-                    ) {
-                        $video_file_url = $media_video_file;
-                    }
-                    if ($video_file_url !== "" && $video_file_type === "") {
-                        $video_file_type_data = wp_check_filetype($video_file_url);
-                        $video_file_type = (string) ($video_file_type_data["type"] ??
-                            "");
                     }
 
                     $debt_terms_post = get_the_terms(get_the_ID(), "review_debt_type");
@@ -291,39 +256,9 @@ $i = 0;
                         }
                     }
 
-                    if (
-                        !in_array($media_source, ["photo", "link", "file"], true)
-                    ) {
-                        if ($video_file_url !== "") {
-                            $media_source = "file";
-                        } elseif (!empty($media_video)) {
-                            $media_source = "link";
-                        } else {
-                            $media_source = "photo";
-                        }
-                    }
-
-                    $render_video_file =
-                        $media_source === "file" && $video_file_url !== "";
-                    $render_video_link =
-                        $media_source === "link" && !empty($media_video);
-                    $render_media_photo =
-                        !$render_video_file && !$render_video_link;
-                    $rendered_media_photo_url =
-                        $media_photo_url !== ""
-                            ? $media_photo_url
-                            : $review_photo_url;
-                    $rendered_media_photo_alt =
-                        $media_photo_alt !== ""
-                            ? $media_photo_alt
-                            : $review_photo_alt;
-                    $has_media =
-                        $render_video_file || $render_video_link || $render_media_photo;
                     $hidden_class = $i > $per_page ? " case-card--hidden" : "";
                     ?>
-            <article class="case-card<?php echo esc_attr(
-                $hidden_class,
-            ); ?><?php echo $has_media ? " case-card--media" : ""; ?>"
+            <article class="case-card<?php echo esc_attr($hidden_class); ?>"
                 data-amount="<?php echo esc_attr($amount_range); ?>"
                 data-debt="<?php echo esc_attr($debt_slugs); ?>"
                 data-creditor-type="<?php echo esc_attr(
@@ -332,28 +267,6 @@ $i = 0;
                 data-creditor="<?php echo esc_attr($creditor_slugs); ?>">
 
                 <h3 class="case-card__title"><?php echo esc_html($person_name); ?></h3>
-
-                <?php if ($has_media): ?>
-                <div class="case-card__media">
-                    <?php if ($render_video_file): ?>
-                    <div class="case-card__video">
-                        <video controls preload="metadata" playsinline>
-                            <source src="<?php echo esc_url(
-                                $video_file_url,
-                            ); ?>"<?php echo $video_file_type !== ""
-    ? ' type="' . esc_attr($video_file_type) . '"'
-    : ""; ?>>
-                        </video>
-                    </div>
-                    <?php elseif ($render_video_link): ?>
-                    <div class="case-card__video"><?php echo $media_video; ?></div>
-                    <?php else: ?>
-                    <img src="<?php echo esc_url(
-                        $rendered_media_photo_url,
-                    ); ?>" alt="<?php echo esc_attr($rendered_media_photo_alt); ?>">
-                    <?php endif; ?>
-                </div>
-                <?php endif; ?>
 
                 <div class="case-card__row">
                     <div class="case-card__body">
