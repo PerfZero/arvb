@@ -115,6 +115,34 @@
             "append": ""
         },
         {
+            "key": "field_quiz_single_selection_type",
+            "label": "Тип выбора (одношаговый режим)",
+            "name": "quiz_single_selection_type",
+            "aria-label": "",
+            "type": "select",
+            "instructions": "Выберите, можно ли отметить один вариант или несколько.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "single": "Один вариант (radio)",
+                "multiple": "Несколько вариантов (checkbox)"
+            },
+            "default_value": "single",
+            "return_format": "value",
+            "multiple": 0,
+            "allow_null": 0,
+            "ui": 0,
+            "ajax": 0,
+            "placeholder": "",
+            "create_options": 0,
+            "save_options": 0
+        },
+        {
             "key": "field_quiz_options",
             "label": "Варианты (одношаговый режим)",
             "name": "quiz_options",
@@ -173,6 +201,35 @@
                     "parent_repeater": "field_quiz_options",
                     "default_value": "",
                     "placeholder": "https://..."
+                },
+                {
+                    "key": "field_quiz_option_action",
+                    "label": "Действие варианта",
+                    "name": "option_action",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "30",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "link": "Переход по ссылке",
+                        "reject": "Показать блок «К сожалению»"
+                    },
+                    "default_value": "link",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_quiz_options"
                 }
             ]
         },
@@ -240,6 +297,35 @@
                     "default_value": ""
                 },
                 {
+                    "key": "field_quiz_step_selection_type",
+                    "label": "Тип выбора на шаге",
+                    "name": "step_selection_type",
+                    "aria-label": "",
+                    "type": "select",
+                    "instructions": "Один вариант (radio) или несколько (checkbox).",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "choices": {
+                        "single": "Один вариант (radio)",
+                        "multiple": "Несколько вариантов (checkbox)"
+                    },
+                    "default_value": "single",
+                    "return_format": "value",
+                    "multiple": 0,
+                    "allow_null": 0,
+                    "ui": 0,
+                    "ajax": 0,
+                    "placeholder": "",
+                    "create_options": 0,
+                    "save_options": 0,
+                    "parent_repeater": "field_quiz_steps"
+                },
+                {
                     "key": "field_quiz_step_options",
                     "label": "Варианты ответа",
                     "name": "step_options",
@@ -299,6 +385,35 @@
                             "parent_repeater": "field_quiz_step_options",
                             "default_value": "",
                             "placeholder": "https://..."
+                        },
+                        {
+                            "key": "field_quiz_step_option_action",
+                            "label": "Действие варианта",
+                            "name": "option_action",
+                            "aria-label": "",
+                            "type": "select",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "30",
+                                "class": "",
+                                "id": ""
+                            },
+                            "choices": {
+                                "link": "Переход по ссылке",
+                                "reject": "Показать блок «К сожалению»"
+                            },
+                            "default_value": "link",
+                            "return_format": "value",
+                            "multiple": 0,
+                            "allow_null": 0,
+                            "ui": 0,
+                            "ajax": 0,
+                            "placeholder": "",
+                            "create_options": 0,
+                            "save_options": 0,
+                            "parent_repeater": "field_quiz_step_options"
                         }
                     ]
                 }
@@ -363,6 +478,103 @@
             "placeholder": "",
             "prepend": "",
             "append": ""
+        },
+        {
+            "key": "field_quiz_reject_title",
+            "label": "Заголовок блока «К сожалению»",
+            "name": "quiz_reject_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Показывается, если выбран вариант с действием «Показать блок «К сожалению»».",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "К сожалению мы не сможем вам помочь",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_reject_text",
+            "label": "Текст блока «К сожалению»",
+            "name": "quiz_reject_text",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Так как сумма долга составляет менее 400 000 руб, вы можете обратиться в МФЦ, чтобы воспользоваться внесудебной процедурой банкротства.",
+            "maxlength": "",
+            "rows": 4,
+            "placeholder": "",
+            "new_lines": "br"
+        },
+        {
+            "key": "field_quiz_reject_note",
+            "label": "Дополнительный текст (с форматированием)",
+            "name": "quiz_reject_note",
+            "aria-label": "",
+            "type": "wysiwyg",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "<p>А также, <strong>приглашаем вас присоединиться к нашему чату поддержки в Telegram</strong>, где мы отвечаем на вопросы наших подписчиков по вопросам списания долгов</p>",
+            "tabs": "all",
+            "toolbar": "basic",
+            "media_upload": 0,
+            "delay": 0
+        },
+        {
+            "key": "field_quiz_reject_button_text",
+            "label": "Текст кнопки блока «К сожалению»",
+            "name": "quiz_reject_button_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Перейти в Telegram чат",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_reject_button_url",
+            "label": "Ссылка кнопки блока «К сожалению»",
+            "name": "quiz_reject_button_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "https://..."
         },
         {
             "key": "field_quiz_image",

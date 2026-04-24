@@ -536,6 +536,7 @@ function spbau_send_smi_lead_to_bitrix(
     string $source_description = "Сайт spb-au / Мы в СМИ",
     string $client_name = "Клиент сайта",
     string $extra_comments = "",
+    string $email = "",
 ): array {
     $webhook = spbau_bitrix_webhook_url();
     if ($webhook === "") {
@@ -573,6 +574,14 @@ function spbau_send_smi_lead_to_bitrix(
         ],
         "params" => ["REGISTER_SONET_EVENT" => "Y"],
     ];
+
+    $email = sanitize_email($email);
+    if ($email !== "" && is_email($email)) {
+        $payload["fields"]["EMAIL"] = [[
+            "VALUE" => $email,
+            "VALUE_TYPE" => "WORK",
+        ]];
+    }
 
     $timeout = 30;
     $env_timeout = getenv("SPBAU_BITRIX_TIMEOUT");
@@ -1792,6 +1801,163 @@ function spbau_handle_consultmodal_submit(): void
 
 add_action("admin_post_spbau_consultmodal_submit",        "spbau_handle_consultmodal_submit");
 add_action("admin_post_nopriv_spbau_consultmodal_submit", "spbau_handle_consultmodal_submit");
+
+function spbau_handle_quiz_submit(): void
+{
+    $append_fragment = static function (string $url, string $fragment): string {
+        $parts = wp_parse_url($url);
+        if (!$parts || empty($parts["scheme"]) || empty($parts["host"])) {
+            return $url . "#" . ltrim($fragment, "#");
+        }
+
+        $result = $parts["scheme"] . "://" . $parts["host"];
+        if (!empty($parts["port"])) {
+            $result .= ":" . $parts["port"];
+        }
+        if (!empty($parts["path"])) {
+            $result .= $parts["path"];
+        }
+        if (!empty($parts["query"])) {
+            $result .= "?" . $parts["query"];
+        }
+
+        return $result . "#" . ltrim($fragment, "#");
+    };
+
+    $quiz_context = isset($_POST["quiz_context"])
+        ? sanitize_key(wp_unslash($_POST["quiz_context"]))
+        : "main";
+
+    $nonce_ok = isset($_POST["spbau_quiz_nonce"]) &&
+        wp_verify_nonce(
+            sanitize_text_field(wp_unslash($_POST["spbau_quiz_nonce"])),
+            "spbau_quiz_submit",
+        );
+
+    $redirect = wp_get_referer();
+    if (!$redirect) {
+        $redirect = home_url("/");
+    }
+    if ($quiz_context === "main") {
+        $redirect = $append_fragment($redirect, "calc-quiz");
+    }
+
+    if (!$nonce_ok) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "quiz_form_status" => "error",
+                    "quiz_form_message" => "Ошибка безопасности формы.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    $name = isset($_POST["quiz_name"])
+        ? sanitize_text_field(wp_unslash($_POST["quiz_name"]))
+        : "";
+    $phone_raw = isset($_POST["quiz_phone"])
+        ? sanitize_text_field(wp_unslash($_POST["quiz_phone"]))
+        : "";
+    $email = isset($_POST["quiz_email"])
+        ? sanitize_email(wp_unslash($_POST["quiz_email"]))
+        : "";
+    $quiz_title = isset($_POST["quiz_title"])
+        ? sanitize_text_field(wp_unslash($_POST["quiz_title"]))
+        : "Квиз";
+    $quiz_id = isset($_POST["quiz_id"]) ? (int) $_POST["quiz_id"] : 0;
+    $answers = isset($_POST["quiz_answers"])
+        ? sanitize_textarea_field(wp_unslash($_POST["quiz_answers"]))
+        : "";
+    $target_url = isset($_POST["quiz_target_url"])
+        ? esc_url_raw(wp_unslash($_POST["quiz_target_url"]))
+        : "";
+
+    $digits = preg_replace("/\D+/", "", $phone_raw);
+    $phone = $digits !== "" ? "+" . $digits : "";
+
+    if ($name === "" || strlen($digits) < 10 || $email === "" || !is_email($email)) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "quiz_form_status" => "error",
+                    "quiz_form_message" =>
+                        "Укажите имя, корректный телефон и email.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if ($quiz_title === "" && $quiz_id > 0) {
+        $post_title = get_the_title($quiz_id);
+        if (is_string($post_title) && $post_title !== "") {
+            $quiz_title = $post_title;
+        }
+    }
+    if ($quiz_title === "") {
+        $quiz_title = "Квиз";
+    }
+
+    $context_map = [
+        "main" => "основной блок",
+        "widget" => "виджет в сайдбаре",
+    ];
+    $context_text = $context_map[$quiz_context] ?? "основной блок";
+
+    $extra = "Форма: Квиз\n" . "Контекст: " . $context_text;
+    if ($quiz_id > 0) {
+        $extra .= "\n" . "ID квиза: " . $quiz_id;
+    }
+    if ($answers !== "") {
+        $extra .= "\n" . "Ответы:\n" . $answers;
+    }
+
+    $result = spbau_send_smi_lead_to_bitrix(
+        $phone,
+        $redirect,
+        'Заявка с квиза "' . $quiz_title . '"',
+        "Сайт spb-au / Квиз",
+        $name,
+        $extra,
+        $email,
+    );
+
+    if (!$result["ok"]) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "quiz_form_status" => "error",
+                    "quiz_form_message" => $result["message"],
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if ($target_url !== "" && $target_url !== "#") {
+        wp_redirect($target_url);
+        exit();
+    }
+
+    wp_safe_redirect(
+        add_query_arg(
+            [
+                "quiz_form_status" => "success",
+                "quiz_form_message" => $result["message"],
+            ],
+            $redirect,
+        ),
+    );
+    exit();
+}
+
+add_action("admin_post_spbau_quiz_submit", "spbau_handle_quiz_submit");
+add_action("admin_post_nopriv_spbau_quiz_submit", "spbau_handle_quiz_submit");
 
 // ── Import News ──────────────────────────────────────────────
 add_action('admin_menu', static function (): void {

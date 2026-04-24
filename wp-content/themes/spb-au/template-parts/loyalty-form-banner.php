@@ -43,7 +43,7 @@ $form_message = isset($_GET['lfbanner_message']) ? sanitize_text_field(wp_unslas
                 </div>
 
                 <label class="lf-banner__consent">
-                    <input type="checkbox" name="lf_agree" class="lf-banner__consent-input" checked>
+                    <input type="checkbox" name="lf_agree" class="lf-banner__consent-input">
                     <span class="lf-banner__consent-box" aria-hidden="true">
                         <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                             <path d="M1 5L4.2 8.2L11 1.2" stroke="#2d6bd9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

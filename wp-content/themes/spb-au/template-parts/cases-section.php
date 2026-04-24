@@ -66,7 +66,7 @@ $i = 0;
                 <div class="filter-group">
                     <div class="filter-group__title">Сумма долга</div>
                     <div class="filter-group__items">
-                    <label class="filter-radio"><input type="radio" name="amount" value="all" checked> Все суммы</label>
+                    <label class="filter-radio"><input type="radio" name="amount" value="all"> Все суммы</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="350-500"> 350 000–500 000 рублей</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="500-1000"> 500 000–1 000 000 рублей</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="1000plus"> Более 1 000 000 рублей</label>
@@ -77,7 +77,7 @@ $i = 0;
                     <div class="filter-group__items">
                     <?php foreach ($age_ranges as $value => $label): ?>
                         <label class="filter-radio">
-                            <input type="radio" name="age" value="<?php echo esc_attr($value); ?>" <?php echo $value === "all" ? "checked" : ""; ?>>
+                            <input type="radio" name="age" value="<?php echo esc_attr($value); ?>">
                             <?php echo esc_html($label); ?>
                         </label>
                     <?php endforeach; ?>
@@ -88,7 +88,7 @@ $i = 0;
                     <div class="filter-group__items">
                     <?php foreach ($creditors_ranges as $value => $label): ?>
                         <label class="filter-radio">
-                            <input type="radio" name="creditors" value="<?php echo esc_attr($value); ?>" <?php echo $value === "all" ? "checked" : ""; ?>>
+                            <input type="radio" name="creditors" value="<?php echo esc_attr($value); ?>">
                             <?php echo esc_html($label); ?>
                         </label>
                     <?php endforeach; ?>
@@ -97,7 +97,7 @@ $i = 0;
                 <div class="filter-group">
                     <div class="filter-group__title">Вид долгов</div>
                     <div class="filter-group__items">
-                        <label class="filter-radio"><input type="radio" name="debt" value="all" checked> Все</label>
+                        <label class="filter-radio"><input type="radio" name="debt" value="all"> Все</label>
                         <?php foreach ($debt_types as $term): ?>
                         <label class="filter-radio">
                             <input type="radio" name="debt" value="<?php echo esc_attr(
@@ -111,7 +111,7 @@ $i = 0;
                 <div class="filter-group">
                     <div class="filter-group__title">Типы кредиторов</div>
                     <div class="filter-group__items">
-                        <label class="filter-radio"><input type="radio" name="creditorType" value="all" checked> Все</label>
+                        <label class="filter-radio"><input type="radio" name="creditorType" value="all"> Все</label>
                         <?php foreach ($creditor_types as $term): ?>
                         <label class="filter-radio">
                             <input type="radio" name="creditorType" value="<?php echo esc_attr(
@@ -126,7 +126,7 @@ $i = 0;
                 <div class="filter-group">
                     <div class="filter-group__title">Проблема клиента</div>
                     <div class="filter-group__items">
-                        <label class="filter-radio"><input type="radio" name="problem" value="all" checked> Все</label>
+                        <label class="filter-radio"><input type="radio" name="problem" value="all"> Все</label>
                         <?php foreach ($problem_options as $problem):
                             $problem_slug = sanitize_title($problem);
                         ?>

@@ -67,7 +67,7 @@ $form_message = isset($_GET["marathon_form_message"])
                         </button>
 
                         <label class="marathon__consent">
-                            <input type="checkbox" name="marathon_agree" class="marathon__consent-input" checked required>
+                            <input type="checkbox" name="marathon_agree" class="marathon__consent-input" required>
                             <span class="marathon__consent-box" aria-hidden="true">
                                 <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                                     <path d="M1 5L4.2 8.2L11 1.2" stroke="#2d6bd9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

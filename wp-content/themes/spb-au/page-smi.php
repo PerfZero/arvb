@@ -93,7 +93,7 @@ $smi_query = new WP_Query($args);
                     </div>
                 </div>
                 <label class="smi-collab__consent">
-                    <input type="checkbox" name="smi_agree" class="smi-collab__consent-input" checked required>
+                    <input type="checkbox" name="smi_agree" class="smi-collab__consent-input" required>
                     <span class="smi-collab__consent-box" aria-hidden="true">
                         <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                             <path d="M1 5L4.2 8.2L11 1.2" stroke="#2d6bd9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

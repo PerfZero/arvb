@@ -53,7 +53,7 @@ $consent = get_field('consultmodal_consent', 'option') ?: 'Отправляя ф
                 <div class="consult-modal__action">
                     <button type="submit" class="consult-modal__btn"><?php echo esc_html($btn); ?></button>
                     <label class="consult-modal__consent">
-                        <input type="checkbox" name="cm_agree" class="consult-modal__consent-input" checked>
+                        <input type="checkbox" name="cm_agree" class="consult-modal__consent-input">
                         <span class="consult-modal__consent-box" aria-hidden="true">
                             <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                                 <path d="M1 5L4.2 8.2L11 1.2" stroke="#2d6bd9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

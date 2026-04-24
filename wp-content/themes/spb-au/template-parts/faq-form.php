@@ -62,7 +62,7 @@ $form_message = isset($_GET["faqform_message"])
                     <div class="faq-form__action">
                         <button type="submit" class="faq-form__btn"><?php echo esc_html($btn); ?></button>
                         <label class="faq-form__consent">
-                            <input type="checkbox" name="faqform_agree" class="faq-form__consent-input" checked>
+                            <input type="checkbox" name="faqform_agree" class="faq-form__consent-input">
                             <span class="faq-form__consent-box" aria-hidden="true">
                                 <svg width="12" height="10" viewBox="0 0 12 10" fill="none">
                                     <path d="M1 5L4.2 8.2L11 1.2" stroke="#2d6bd9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>

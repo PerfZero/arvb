@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function processInlineNotices() {
         var notices = document.querySelectorAll(
-            ".smi-collab__notice, .expertise__tg-notice, .faq-form__notice, .booking__notice, .footer-form__notice, .marathon__notice",
+            ".smi-collab__notice, .expertise__tg-notice, .faq-form__notice, .booking__notice, .footer-form__notice, .marathon__notice, .calculator__notice, .calc-widget__notice",
         );
         if (!notices.length) return;
 
@@ -163,6 +163,8 @@ document.addEventListener("DOMContentLoaded", function () {
             "footer_form_message",
             "marathon_form_status",
             "marathon_form_message",
+            "quiz_form_status",
+            "quiz_form_message",
         ];
         var changed = false;
         keys.forEach(function (key) {

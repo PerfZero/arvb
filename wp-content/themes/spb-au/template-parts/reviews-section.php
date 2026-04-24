@@ -100,7 +100,7 @@ $i = 0;
             <div class="filter-group">
                 <div class="filter-group__title">Сумма долга</div>
                 <div class="filter-group__items">
-                    <label class="filter-radio"><input type="radio" name="amount" value="all" checked> Все суммы</label>
+                    <label class="filter-radio"><input type="radio" name="amount" value="all"> Все суммы</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="350-500"> 350 000–500 000 рублей</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="500-1000"> 500 000–1 000 000 рублей</label>
                     <label class="filter-radio"><input type="radio" name="amount" value="1000plus"> Более 1 000 000 рублей</label>
@@ -110,7 +110,7 @@ $i = 0;
             <div class="filter-group">
                 <div class="filter-group__title">Вид долгов</div>
                 <div class="filter-group__items">
-                    <label class="filter-radio"><input type="radio" name="debt" value="all" checked> Все</label>
+                    <label class="filter-radio"><input type="radio" name="debt" value="all"> Все</label>
                     <?php foreach ($debt_types as $term): ?>
                     <label class="filter-radio">
                         <input type="radio" name="debt" value="<?php echo esc_attr($term->slug); ?>">
@@ -123,7 +123,7 @@ $i = 0;
             <div class="filter-group">
                 <div class="filter-group__title">Типы кредиторов</div>
                 <div class="filter-group__items">
-                    <label class="filter-radio"><input type="radio" name="creditorType" value="all" checked> Все</label>
+                    <label class="filter-radio"><input type="radio" name="creditorType" value="all"> Все</label>
                     <?php foreach ($creditor_types as $term): ?>
                     <label class="filter-radio">
                         <input type="radio" name="creditorType" value="<?php echo esc_attr($term->slug); ?>">
@@ -137,7 +137,7 @@ $i = 0;
             <div class="filter-group">
                 <div class="filter-group__title">Кредиторы</div>
                 <div class="filter-group__items">
-                    <label class="filter-radio"><input type="radio" name="creditor" value="all" checked> Все</label>
+                    <label class="filter-radio"><input type="radio" name="creditor" value="all"> Все</label>
                     <?php foreach ($creditor_options as $creditor_slug => $creditor_label): ?>
                     <label class="filter-radio">
                         <input type="radio" name="creditor" value="<?php echo esc_attr(
