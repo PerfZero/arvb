@@ -476,7 +476,8 @@ $render_lead_form = static function (string $context) use ($quiz_id, $title): vo
                     return;
                 }
 
-                if (hasRejectAction(selected) && showReject(quiz)) {
+                var allSelected = collectSelected(quiz);
+                if (hasRejectAction(allSelected) && showReject(quiz)) {
                     return;
                 }
 
