@@ -13134,6 +13134,10 @@ a.breadcrumb__item:hover {
         display: none;
     }
 
+    .homepage .marathon__bullets li > br {
+        display: none;
+    }
+
     .homepage .partner__text,
     .homepage .partner__hint {
         font-size: 14px;
