@@ -165,6 +165,21 @@ add_action("init", static function (): void {
         "rewrite" => ["slug" => "review"],
     ]);
 
+    register_post_type("vacancy", [
+        "labels" => [
+            "name" => "Вакансии",
+            "singular_name" => "Вакансия",
+            "add_new_item" => "Добавить вакансию",
+            "edit_item" => "Редактировать вакансию",
+        ],
+        "public" => false,
+        "show_ui" => true,
+        "show_in_rest" => true,
+        "supports" => ["title", "page-attributes"],
+        "menu_icon" => "dashicons-id-alt",
+        "menu_position" => 9,
+    ]);
+
     register_post_type("quiz", [
         "labels" => [
             "name" => "Квизы",

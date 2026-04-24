@@ -3,6 +3,24 @@
     "title": "Работа у нас",
     "fields": [
         {
+            "key": "field_jobs_vacancies_hint",
+            "label": "Где редактировать вакансии",
+            "name": "",
+            "aria-label": "",
+            "type": "message",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "message": "<strong>Сами вакансии редактируются в меню:</strong> <code>Вакансии</code>.<br>На этой странице меняются только заголовок и описание блока.",
+            "new_lines": "wpautop",
+            "esc_html": 0
+        },
+        {
             "key": "field_jobs_title",
             "label": "Заголовок",
             "name": "jobs_title",
@@ -62,5 +80,5 @@
     "description": "",
     "show_in_rest": false,
     "display_title": "",
-    "modified": 1775046038
+    "modified": 1775046040
 }

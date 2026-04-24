@@ -1,0 +1,83 @@
+{
+    "key": "group_vacancy_entity",
+    "title": "Поля вакансии",
+    "fields": [
+        {
+            "key": "field_vacancy_salary",
+            "label": "Зарплата",
+            "name": "vacancy_salary",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "placeholder": "Например: От 120 000 ₽ за месяц, на руки",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_vacancy_url",
+            "label": "Ссылка на вакансию",
+            "name": "vacancy_url",
+            "aria-label": "",
+            "type": "url",
+            "instructions": "Ссылка на HH или другую страницу вакансии.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "placeholder": "https://..."
+        },
+        {
+            "key": "field_vacancy_btn_text",
+            "label": "Текст кнопки",
+            "name": "vacancy_btn_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Подробнее",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "vacancy"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": 0,
+    "display_title": "",
+    "modified": 1777050000
+}
