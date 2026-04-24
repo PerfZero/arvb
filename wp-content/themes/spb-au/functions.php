@@ -53,8 +53,11 @@ add_action("after_setup_theme", static function (): void {
     add_theme_support("custom-logo");
 
     register_nav_menus([
-        "primary"   => __("Основное меню", "spb-au"),
-        "secondary" => __("Дополнительное меню", "spb-au"),
+        "primary"          => __("Основное меню", "spb-au"),
+        "secondary"        => __("Дополнительное меню", "spb-au"),
+        "footer_primary"   => __("Подвал: Колонка 1", "spb-au"),
+        "footer_secondary" => __("Подвал: Колонка 2", "spb-au"),
+        "footer_legal"     => __("Подвал: Юридические ссылки", "spb-au"),
     ]);
 });
 

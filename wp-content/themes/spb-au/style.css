@@ -524,6 +524,9 @@ img {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .footer-nav-col a {
@@ -763,6 +766,16 @@ a.footer-contact-value:hover {
     color: #fff;
 }
 
+.footer-dev span {
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 18px;
+    line-height: 155%;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: #fff;
+}
+
 .footer-dev a:hover {
     color: rgba(255, 255, 255, 0.9);
 }
@@ -789,11 +802,17 @@ a.footer-contact-value:hover {
 }
 
 .footer-legal-links {
+    margin-top: 8px;
+}
+
+.footer-legal-links ul {
     display: flex;
     flex-direction: column;
     align-items: flex-end;
     gap: 2px;
-    margin-top: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .footer-legal-links a {
@@ -10805,6 +10824,10 @@ a.breadcrumb__item:hover {
         align-items: flex-start;
     }
 
+    .footer-legal-links ul {
+        align-items: flex-start;
+    }
+
     .footer-messengers-label {
         font-size: 20px;
     }
@@ -10833,6 +10856,123 @@ a.breadcrumb__item:hover {
     max-width: 1920px;
     margin: 0 auto;
     padding: 40px 24px 80px;
+}
+
+/* ===== Типовая страница ===== */
+.typical-page {
+    padding: 40px 0 80px;
+}
+
+.typical-page__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.typical-page__article {
+    margin-top: 16px;
+}
+
+.typical-page__title {
+    margin: 0 0 24px;
+    font-family: "Onest", sans-serif;
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 110%;
+    color: var(--text);
+}
+
+.typical-page__cover {
+    margin: 0 0 28px;
+}
+
+.typical-page__cover-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 22px;
+}
+
+.typical-page__content {
+    color: var(--text);
+    font-family: "Onest", sans-serif;
+    font-size: 24px;
+    line-height: 150%;
+}
+
+.typical-page__content h2,
+.typical-page__content h3,
+.typical-page__content h4 {
+    margin: 32px 0 14px;
+    line-height: 120%;
+}
+
+.typical-page__content h2 {
+    font-size: 40px;
+}
+
+.typical-page__content h3 {
+    font-size: 32px;
+}
+
+.typical-page__content p {
+    margin: 0 0 18px;
+}
+
+.typical-page__content ul,
+.typical-page__content ol {
+    margin: 0 0 18px 24px;
+}
+
+.typical-page__content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+}
+
+.typical-page__content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 24px;
+}
+
+.typical-page__content th,
+.typical-page__content td {
+    border: 1px solid #d7dcec;
+    padding: 12px;
+    text-align: left;
+}
+
+@media (max-width: 900px) {
+    .typical-page {
+        padding: 24px 0 56px;
+    }
+
+    .typical-page__inner {
+        padding: 0 16px;
+    }
+
+    .typical-page__title {
+        margin-bottom: 16px;
+        font-size: 34px;
+    }
+
+    .typical-page__cover {
+        margin-bottom: 20px;
+    }
+
+    .typical-page__content {
+        font-size: 18px;
+        line-height: 155%;
+    }
+
+    .typical-page__content h2 {
+        font-size: 28px;
+    }
+
+    .typical-page__content h3 {
+        font-size: 24px;
+    }
 }
 .jobs-page__title {
     font-family: "Onest", sans-serif;
