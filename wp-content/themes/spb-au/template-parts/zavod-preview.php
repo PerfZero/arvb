@@ -126,12 +126,31 @@ $steps = array_slice($first['section_steps'] ?? [], 0, 4);
 
 <script>
 (function(){
-    document.querySelectorAll('.zavod-preview .zavod-step__header').forEach(function(h){
-        h.addEventListener('click', function(){
-            this.closest('.zavod-step').classList.toggle('is-open');
+    var wraps = document.querySelectorAll('.zavod-preview .zavod-preview__steps');
+    wraps.forEach(function(wrap){
+        var steps = Array.prototype.slice.call(wrap.querySelectorAll('.zavod-step'));
+        if (!steps.length) return;
+
+        var closeAll = function() {
+            steps.forEach(function(step) {
+                step.classList.remove('is-open');
+            });
+        };
+
+        steps.forEach(function(step){
+            var header = step.querySelector('.zavod-step__header');
+            if (!header) return;
+
+            header.addEventListener('click', function(){
+                var wasOpen = step.classList.contains('is-open');
+                closeAll();
+                if (!wasOpen) {
+                    step.classList.add('is-open');
+                }
+            });
         });
+
+        steps[0].classList.add('is-open');
     });
-    var first = document.querySelector('.zavod-preview .zavod-step');
-    if (first) first.classList.add('is-open');
 })();
 </script>

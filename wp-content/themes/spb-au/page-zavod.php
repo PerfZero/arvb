@@ -159,15 +159,31 @@ $allowed = [
 </main>
 
 <script>
-document.querySelectorAll('.zavod-step__header').forEach(function(header) {
-    header.addEventListener('click', function() {
-        this.closest('.zavod-step').classList.toggle('is-open');
-    });
-});
-// Открыть первый шаг каждой секции
 document.querySelectorAll('.zavod-main').forEach(function(section) {
-    var first = section.querySelector('.zavod-step');
-    if (first) first.classList.add('is-open');
+    var steps = Array.prototype.slice.call(section.querySelectorAll('.zavod-step'));
+    if (!steps.length) return;
+
+    var closeAll = function() {
+        steps.forEach(function(step) {
+            step.classList.remove('is-open');
+        });
+    };
+
+    steps.forEach(function(step) {
+        var header = step.querySelector('.zavod-step__header');
+        if (!header) return;
+
+        header.addEventListener('click', function() {
+            var wasOpen = step.classList.contains('is-open');
+            closeAll();
+            if (!wasOpen) {
+                step.classList.add('is-open');
+            }
+        });
+    });
+
+    // Открыть первый шаг каждой секции
+    steps[0].classList.add('is-open');
 });
 </script>
 
