@@ -13098,7 +13098,7 @@ a.breadcrumb__item:hover {
     }
 
     .partner__content {
-        padding: 20px;
+        padding: 10px;
     }
 
     .homepage .partner__content,
@@ -13130,10 +13130,15 @@ a.breadcrumb__item:hover {
         line-height: 118%;
     }
 
+    .partner__title br {
+        display: none;
+    }
+
     .homepage .partner__text,
     .homepage .partner__hint {
         font-size: 14px;
         line-height: 135%;
+        text-wrap: balance;
     }
 
     .partner__hint {
@@ -13171,6 +13176,10 @@ a.breadcrumb__item:hover {
     .homepage .earn__subtitle {
         font-size: 15px;
         line-height: 135%;
+    }
+
+    .earn__subtitle br {
+        display: none;
     }
 
     .homepage .earn__grid {
