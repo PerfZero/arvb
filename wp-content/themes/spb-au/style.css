@@ -3663,7 +3663,7 @@ a.breadcrumb__item:hover {
     }
 
     .zavod-tag {
-        font-size: 13px;
+        font-size: 10px;
         line-height: 170%;
         padding: 3px 10px;
     }
@@ -8789,6 +8789,8 @@ a.breadcrumb__item:hover {
     text-decoration: none;
     align-self: flex-start;
     transition: opacity 0.2s;
+    border: none;
+    cursor: pointer;
 }
 
 .proc__step-btn:hover {
@@ -9003,6 +9005,9 @@ a.breadcrumb__item:hover {
         font-size: 13px;
         line-height: 1.2;
         text-align: center;
+        border: none;
+        text-decoration: none;
+        cursor: pointer;
     }
 
     .proc-mobile__btn.is-disabled {

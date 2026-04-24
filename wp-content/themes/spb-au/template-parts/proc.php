@@ -28,6 +28,18 @@ $safe_proc_btn_url = static function ($url): string {
 
     return $url;
 };
+$is_consult_btn_text = static function ($text): bool {
+    $text = is_string($text) ? trim($text) : "";
+    if ($text === "") {
+        return false;
+    }
+
+    if (function_exists("mb_stripos")) {
+        return mb_stripos($text, "консульт") !== false;
+    }
+
+    return strpos($text, "консульт") !== false || strpos($text, "Консульт") !== false;
+};
 ?>
 <section class="proc">
     <div class="container">
@@ -47,6 +59,8 @@ $safe_proc_btn_url = static function ($url): string {
                 <?php foreach ($all_steps as $i => $step):
                     $step_num = $i + 1;
                     $btn_url = $safe_proc_btn_url($step["proc_step_btn_url"] ?? "");
+                    $btn_text = trim((string) ($step["proc_step_btn_text"] ?? ""));
+                    $btn_is_consult = $is_consult_btn_text($btn_text);
                     $is_first = $i === 0;
                     ?>
                 <article class="proc-mobile__stage<?php echo $is_first
@@ -84,11 +98,15 @@ $safe_proc_btn_url = static function ($url): string {
                         <a href="<?php echo esc_url(
                             $btn_url,
                         ); ?>" class="proc-mobile__btn"><?php echo esc_html(
-    $step["proc_step_btn_text"] ?: "Подробнее",
+    $btn_text !== "" ? $btn_text : "Подробнее",
 ); ?></a>
-                        <?php elseif (!empty($step["proc_step_btn_text"])): ?>
+                        <?php elseif ($btn_is_consult): ?>
+                        <button type="button" class="proc-mobile__btn" data-consult-open><?php echo esc_html(
+                            $btn_text,
+                        ); ?></button>
+                        <?php elseif ($btn_text !== ""): ?>
                         <span class="proc-mobile__btn is-disabled"><?php echo esc_html(
-                            $step["proc_step_btn_text"],
+                            $btn_text,
                         ); ?></span>
                         <?php endif; ?>
                         <div class="proc-mobile__nav">
@@ -165,10 +183,16 @@ $safe_proc_btn_url = static function ($url): string {
                     <?php $btn_url = $safe_proc_btn_url(
                         $step["proc_step_btn_url"] ?? "",
                     ); ?>
+                    <?php $btn_text = trim((string) ($step["proc_step_btn_text"] ?? "")); ?>
+                    <?php $btn_is_consult = $is_consult_btn_text($btn_text); ?>
                     <?php if ($btn_url): ?>
                     <a href="<?php echo esc_url($btn_url); ?>" class="proc__step-btn">
-                        <?php echo esc_html($step['proc_step_btn_text'] ?: 'Подробнее'); ?>
+                        <?php echo esc_html($btn_text !== "" ? $btn_text : "Подробнее"); ?>
                     </a>
+                    <?php elseif ($btn_is_consult): ?>
+                    <button type="button" class="proc__step-btn" data-consult-open>
+                        <?php echo esc_html($btn_text); ?>
+                    </button>
                     <?php endif; ?>
                 </div>
             </div>
@@ -201,10 +225,16 @@ $safe_proc_btn_url = static function ($url): string {
                     <?php $btn_url = $safe_proc_btn_url(
                         $step["proc_step_btn_url"] ?? "",
                     ); ?>
+                    <?php $btn_text = trim((string) ($step["proc_step_btn_text"] ?? "")); ?>
+                    <?php $btn_is_consult = $is_consult_btn_text($btn_text); ?>
                     <?php if ($btn_url): ?>
                     <a href="<?php echo esc_url($btn_url); ?>" class="proc__step-btn">
-                        <?php echo esc_html($step['proc_step_btn_text'] ?: 'Подробнее'); ?>
+                        <?php echo esc_html($btn_text !== "" ? $btn_text : "Подробнее"); ?>
                     </a>
+                    <?php elseif ($btn_is_consult): ?>
+                    <button type="button" class="proc__step-btn" data-consult-open>
+                        <?php echo esc_html($btn_text); ?>
+                    </button>
                     <?php endif; ?>
                 </div>
             </div>
