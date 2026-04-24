@@ -87,6 +87,13 @@ add_filter("acf/settings/load_json", function ($paths) {
     return $paths;
 });
 
+add_filter("acf/load_field_group", static function (array $group): array {
+    if (($group["key"] ?? "") === "group_quiz_assignment") {
+        $group["active"] = false;
+    }
+    return $group;
+});
+
 // Кастомный тип записей: Услуги
 add_action("init", static function (): void {
     register_post_type("service", [
@@ -158,6 +165,21 @@ add_action("init", static function (): void {
         "rewrite" => ["slug" => "review"],
     ]);
 
+    register_post_type("quiz", [
+        "labels" => [
+            "name" => "Квизы",
+            "singular_name" => "Квиз",
+            "add_new_item" => "Добавить квиз",
+            "edit_item" => "Редактировать квиз",
+        ],
+        "public" => false,
+        "show_ui" => true,
+        "show_in_rest" => false,
+        "supports" => ["title"],
+        "menu_icon" => "dashicons-forms",
+        "menu_position" => 8,
+    ]);
+
     register_taxonomy("review_debt_type", "review", [
         "label" => "Вид долгов",
         "hierarchical" => false,
@@ -202,6 +224,112 @@ add_action("init", static function (): void {
         "menu_position" => 7,
     ]);
 });
+
+function spbau_detect_quiz_context(string $mode = "main"): string
+{
+    if ($mode === "widget") {
+        if (is_singular("case")) {
+            return "single_case";
+        }
+        if (is_singular("review")) {
+            return "single_review";
+        }
+        return "";
+    }
+
+    if (is_front_page()) {
+        return "front_page";
+    }
+    if (is_page_template("page-zavod.php")) {
+        return "page_zavod";
+    }
+    if (is_singular("service")) {
+        return "single_service";
+    }
+    if (is_singular("post")) {
+        return "single_post";
+    }
+    if (is_singular("case")) {
+        return "single_case";
+    }
+    if (is_singular("review")) {
+        return "single_review";
+    }
+
+    return "";
+}
+
+function spbau_get_active_quiz_id(string $mode = "main"): int
+{
+    static $cache = [];
+
+    $context = spbau_detect_quiz_context($mode);
+    if ($context === "") {
+        return 0;
+    }
+    if (isset($cache[$context])) {
+        return (int) $cache[$context];
+    }
+
+    $posts = get_posts([
+        "post_type" => "quiz",
+        "post_status" => "publish",
+        "posts_per_page" => -1,
+        "orderby" => "date",
+        "order" => "DESC",
+        "fields" => "ids",
+        "no_found_rows" => true,
+        "suppress_filters" => true,
+    ]);
+
+    $best_id = 0;
+    $best_priority = PHP_INT_MAX;
+    $best_date = 0;
+
+    foreach ($posts as $quiz_id) {
+        $locations = function_exists("get_field")
+            ? get_field("quiz_display_locations", $quiz_id)
+            : get_post_meta($quiz_id, "quiz_display_locations", true);
+
+        if (is_string($locations) && $locations !== "") {
+            $locations = [$locations];
+        }
+        if (!is_array($locations) || empty($locations)) {
+            continue;
+        }
+
+        if (
+            !in_array("all", $locations, true) &&
+            !in_array($context, $locations, true)
+        ) {
+            continue;
+        }
+
+        $priority_raw = function_exists("get_field")
+            ? get_field("quiz_display_priority", $quiz_id)
+            : get_post_meta($quiz_id, "quiz_display_priority", true);
+        $priority = (int) $priority_raw;
+        if ($priority <= 0) {
+            $priority = 100;
+        }
+
+        $quiz_post = get_post($quiz_id);
+        $date = $quiz_post ? strtotime((string) $quiz_post->post_date_gmt) : 0;
+
+        if (
+            $best_id === 0 ||
+            $priority < $best_priority ||
+            ($priority === $best_priority && $date > $best_date)
+        ) {
+            $best_id = (int) $quiz_id;
+            $best_priority = $priority;
+            $best_date = $date;
+        }
+    }
+
+    $cache[$context] = $best_id;
+    return $best_id;
+}
 
 add_action("init", static function (): void {
     $rewrite_version = "spbau_rewrite_v20260423_review_archive";

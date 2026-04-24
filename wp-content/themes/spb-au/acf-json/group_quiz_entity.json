@@ -1,0 +1,412 @@
+{
+    "key": "group_quiz_entity",
+    "title": "Квиз — поля",
+    "fields": [
+        {
+            "key": "field_quiz_display_locations",
+            "label": "Где показывать квиз",
+            "name": "quiz_display_locations",
+            "aria-label": "",
+            "type": "checkbox",
+            "instructions": "Выберите разделы, где этот квиз должен выводиться.",
+            "required": 1,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "75",
+                "class": "",
+                "id": ""
+            },
+            "choices": {
+                "front_page": "Главная страница",
+                "single_service": "Внутренняя страница услуги",
+                "single_case": "Внутренняя страница кейса",
+                "single_review": "Внутренняя страница отзыва",
+                "single_post": "Внутренняя страница статьи",
+                "page_zavod": "Страница \"Завод банкротств\"",
+                "all": "Везде (фолбек)"
+            },
+            "default_value": [],
+            "return_format": "value",
+            "allow_custom": 0,
+            "layout": "vertical",
+            "toggle": 0,
+            "save_custom": 0,
+            "custom_choice_button_text": "Добавить новый вариант"
+        },
+        {
+            "key": "field_quiz_display_priority",
+            "label": "Приоритет показа",
+            "name": "quiz_display_priority",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Если несколько квизов назначены на один раздел, будет выбран квиз с меньшим приоритетом.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "25",
+                "class": "",
+                "id": ""
+            },
+            "default_value": 100,
+            "min": 1,
+            "max": "",
+            "step": 1,
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_title",
+            "label": "Заголовок",
+            "name": "quiz_title",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Если пусто, берётся заголовок записи квиза.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Онлайн калькулятор стоимости процедуры",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_description",
+            "label": "Описание",
+            "name": "quiz_description",
+            "aria-label": "",
+            "type": "textarea",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "maxlength": "",
+            "rows": 3,
+            "placeholder": "",
+            "new_lines": ""
+        },
+        {
+            "key": "field_quiz_label",
+            "label": "Подпись над вариантами",
+            "name": "quiz_label",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "Используется в одношаговом режиме.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Укажите сумму ваших долгов",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_options",
+            "label": "Варианты (одношаговый режим)",
+            "name": "quiz_options",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Если шаги ниже не заполнены, квиз работает в одном шаге по этим вариантам.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "min": 0,
+            "max": 0,
+            "layout": "table",
+            "button_label": "Добавить вариант",
+            "collapsed": "",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_quiz_option_label",
+                    "label": "Текст варианта",
+                    "name": "option_label",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "65",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_quiz_options",
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_quiz_option_url",
+                    "label": "Ссылка результата",
+                    "name": "option_url",
+                    "aria-label": "",
+                    "type": "url",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "35",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_quiz_options",
+                    "default_value": "",
+                    "placeholder": "https://..."
+                }
+            ]
+        },
+        {
+            "key": "field_quiz_steps",
+            "label": "Шаги квиза",
+            "name": "quiz_steps",
+            "aria-label": "",
+            "type": "repeater",
+            "instructions": "Многошаговый режим. На последнем шаге у вариантов укажите итоговые ссылки.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "min": 0,
+            "max": 0,
+            "layout": "block",
+            "button_label": "Добавить шаг",
+            "collapsed": "field_quiz_step_question",
+            "rows_per_page": 20,
+            "sub_fields": [
+                {
+                    "key": "field_quiz_step_question",
+                    "label": "Вопрос шага",
+                    "name": "step_question",
+                    "aria-label": "",
+                    "type": "text",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "parent_repeater": "field_quiz_steps",
+                    "default_value": "",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "prepend": "",
+                    "append": ""
+                },
+                {
+                    "key": "field_quiz_step_hint",
+                    "label": "Подсказка под вопросом",
+                    "name": "step_hint",
+                    "aria-label": "",
+                    "type": "textarea",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "rows": 2,
+                    "new_lines": "br",
+                    "maxlength": "",
+                    "placeholder": "",
+                    "parent_repeater": "field_quiz_steps",
+                    "default_value": ""
+                },
+                {
+                    "key": "field_quiz_step_options",
+                    "label": "Варианты ответа",
+                    "name": "step_options",
+                    "aria-label": "",
+                    "type": "repeater",
+                    "instructions": "",
+                    "required": 0,
+                    "conditional_logic": false,
+                    "wrapper": {
+                        "width": "",
+                        "class": "",
+                        "id": ""
+                    },
+                    "min": 0,
+                    "max": 0,
+                    "layout": "table",
+                    "button_label": "Добавить вариант",
+                    "collapsed": "",
+                    "rows_per_page": 20,
+                    "parent_repeater": "field_quiz_steps",
+                    "sub_fields": [
+                        {
+                            "key": "field_quiz_step_option_label",
+                            "label": "Текст варианта",
+                            "name": "option_label",
+                            "aria-label": "",
+                            "type": "text",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "65",
+                                "class": "",
+                                "id": ""
+                            },
+                            "parent_repeater": "field_quiz_step_options",
+                            "default_value": "",
+                            "maxlength": "",
+                            "placeholder": "",
+                            "prepend": "",
+                            "append": ""
+                        },
+                        {
+                            "key": "field_quiz_step_option_url",
+                            "label": "Ссылка результата",
+                            "name": "option_url",
+                            "aria-label": "",
+                            "type": "url",
+                            "instructions": "",
+                            "required": 0,
+                            "conditional_logic": false,
+                            "wrapper": {
+                                "width": "35",
+                                "class": "",
+                                "id": ""
+                            },
+                            "parent_repeater": "field_quiz_step_options",
+                            "default_value": "",
+                            "placeholder": "https://..."
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "key": "field_quiz_next_button_text",
+            "label": "Текст кнопки \"Далее\"",
+            "name": "quiz_next_button_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Далее",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_prev_button_text",
+            "label": "Текст кнопки \"Назад\"",
+            "name": "quiz_prev_button_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "50",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Назад",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_button_text",
+            "label": "Текст кнопки результата",
+            "name": "quiz_button_text",
+            "aria-label": "",
+            "type": "text",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "Узнать результат",
+            "maxlength": "",
+            "placeholder": "",
+            "prepend": "",
+            "append": ""
+        },
+        {
+            "key": "field_quiz_image",
+            "label": "Фото справа",
+            "name": "quiz_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "quiz"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "normal",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "modified": 1777010017
+}

@@ -190,12 +190,6 @@ $has_media = $render_video_file || !empty($video) || !empty($gallery);
 document.addEventListener('DOMContentLoaded', function () {
     var mediaSwiper = document.querySelector('.single-case__swiper');
     if (mediaSwiper) new Swiper(mediaSwiper, { pagination: { el: '.swiper-pagination', clickable: true } });
-
-    var calcBtn = document.querySelector('.calc-widget__btn');
-    if (calcBtn) calcBtn.addEventListener('click', function () {
-        var checked = document.querySelector('input[name="calc_debt_widget"]:checked');
-        if (checked && checked.dataset.url) window.location.href = checked.dataset.url;
-    });
 });
 </script>
 

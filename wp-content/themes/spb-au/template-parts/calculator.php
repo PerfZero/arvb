@@ -3,20 +3,31 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-$title       = get_field('calc_title', 'option') ?: 'Онлайн калькулятор стоимости процедуры';
-$description = get_field('calc_description', 'option') ?: '';
-$label       = get_field('calc_label', 'option') ?: 'Укажите сумму ваших долгов';
-$options     = get_field('calc_options', 'option') ?: [
+$default_options = [
     ['option_label' => 'Менее 350 000 рублей',      'option_url' => ''],
     ['option_label' => '350 000–500 000 рублей',     'option_url' => ''],
     ['option_label' => '500 000–1 000 000 рублей',   'option_url' => ''],
     ['option_label' => 'Более 1 000 000 рублей',     'option_url' => ''],
 ];
-$steps_raw   = get_field('calc_steps', 'option') ?: [];
-$next_text   = get_field('calc_next_button_text', 'option') ?: 'Далее';
-$prev_text   = get_field('calc_prev_button_text', 'option') ?: 'Назад';
-$btn_text    = get_field('calc_button_text', 'option') ?: 'Узнать результат';
-$image       = get_field('calc_image', 'option');
+
+if (!function_exists('spbau_get_active_quiz_id')) {
+    return;
+}
+
+$quiz_id = (int) spbau_get_active_quiz_id('main');
+if ($quiz_id <= 0) {
+    return;
+}
+
+$title = get_field('quiz_title', $quiz_id) ?: get_the_title($quiz_id);
+$description = get_field('quiz_description', $quiz_id) ?: '';
+$label = get_field('quiz_label', $quiz_id) ?: 'Укажите сумму ваших долгов';
+$options = get_field('quiz_options', $quiz_id) ?: $default_options;
+$steps_raw = get_field('quiz_steps', $quiz_id) ?: [];
+$next_text = get_field('quiz_next_button_text', $quiz_id) ?: 'Далее';
+$prev_text = get_field('quiz_prev_button_text', $quiz_id) ?: 'Назад';
+$btn_text = get_field('quiz_button_text', $quiz_id) ?: 'Узнать результат';
+$image = get_field('quiz_image', $quiz_id);
 
 $steps = [];
 if (is_array($steps_raw)) {
