@@ -166,8 +166,11 @@ $input_name = $widget_id . ($is_multiple ? '-debt[]' : '-debt');
             <div class="calc-widget__lead-fields">
                 <input class="calc-widget__lead-input" type="text" name="quiz_name" placeholder="Имя" required>
                 <input class="calc-widget__lead-input" type="tel" name="quiz_phone" placeholder="Телефон" required inputmode="tel">
-                <input class="calc-widget__lead-input" type="email" name="quiz_email" placeholder="Почта" required>
             </div>
+            <label class="calc-widget__lead-consent">
+                <input type="checkbox" name="quiz_agree" required>
+                <span>Отправляя форму, вы даёте согласие на обработку персональных данных</span>
+            </label>
 
             <button class="calc-widget__result-btn" type="submit">Отправить заявку</button>
         </form>

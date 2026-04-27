@@ -1879,9 +1879,7 @@ function spbau_handle_quiz_submit(): void
     $phone_raw = isset($_POST["quiz_phone"])
         ? sanitize_text_field(wp_unslash($_POST["quiz_phone"]))
         : "";
-    $email = isset($_POST["quiz_email"])
-        ? sanitize_email(wp_unslash($_POST["quiz_email"]))
-        : "";
+    $agree = !empty($_POST["quiz_agree"]);
     $quiz_title = isset($_POST["quiz_title"])
         ? sanitize_text_field(wp_unslash($_POST["quiz_title"]))
         : "Квиз";
@@ -1896,13 +1894,25 @@ function spbau_handle_quiz_submit(): void
     $digits = preg_replace("/\D+/", "", $phone_raw);
     $phone = $digits !== "" ? "+" . $digits : "";
 
-    if ($name === "" || strlen($digits) < 10 || $email === "" || !is_email($email)) {
+    if ($name === "" || strlen($digits) < 10) {
         wp_safe_redirect(
             add_query_arg(
                 [
                     "quiz_form_status" => "error",
-                    "quiz_form_message" =>
-                        "Укажите имя, корректный телефон и email.",
+                    "quiz_form_message" => "Укажите имя и корректный телефон.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
+
+    if (!$agree) {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "quiz_form_status" => "error",
+                    "quiz_form_message" => "Нужно согласие на обработку данных.",
                 ],
                 $redirect,
             ),
@@ -1941,7 +1951,6 @@ function spbau_handle_quiz_submit(): void
         "Сайт spb-au / Квиз",
         $name,
         $extra,
-        $email,
     );
 
     if (!$result["ok"]) {

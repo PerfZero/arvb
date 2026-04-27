@@ -127,8 +127,11 @@ $render_lead_form = static function (string $context) use ($quiz_id, $title): vo
             <div class="calculator__lead-fields">
                 <input class="calculator__lead-input" type="text" name="quiz_name" placeholder="Имя" required>
                 <input class="calculator__lead-input" type="tel" name="quiz_phone" placeholder="Телефон" required inputmode="tel">
-                <input class="calculator__lead-input" type="email" name="quiz_email" placeholder="Почта" required>
             </div>
+            <label class="calculator__lead-consent">
+                <input type="checkbox" name="quiz_agree" required>
+                <span>Отправляя форму, вы даёте согласие на обработку персональных данных</span>
+            </label>
 
             <button class="calculator__lead-btn" type="submit">Отправить заявку</button>
         </form>
