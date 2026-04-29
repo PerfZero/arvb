@@ -79,7 +79,7 @@ $smi_query = new WP_Query($args);
             <?php endif; ?>
             <form class="smi-collab__form" action="<?php echo esc_url(
                 admin_url("admin-post.php"),
-            ); ?>" method="post" novalidate>
+            ); ?>" method="post" novalidate data-smi-collab-form data-media-kit-url="<?php echo esc_url($collab_url); ?>">
                 <input type="hidden" name="action" value="spbau_smi_collab_submit">
                 <?php wp_nonce_field(
                     "spbau_smi_collab_submit",
@@ -108,7 +108,7 @@ $smi_query = new WP_Query($args);
                     <?php echo esc_html($form_message); ?>
                 </div>
                 <?php endif; ?>
-                <button type="submit" class="smi-collab__btn"><?php echo esc_html($collab_btn); ?></button>
+                <button type="submit" class="smi-collab__btn" data-smi-collab-submit disabled aria-disabled="true"><?php echo esc_html($collab_btn); ?></button>
             </form>
         </div>
 

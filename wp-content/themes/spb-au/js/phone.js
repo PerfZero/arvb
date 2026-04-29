@@ -146,6 +146,47 @@ document.addEventListener("DOMContentLoaded", function () {
 
     setupExpertiseTgForm();
 
+    function setupSmiCollabForm() {
+        var forms = document.querySelectorAll("[data-smi-collab-form]");
+        if (!forms.length) return;
+
+        forms.forEach(function (form) {
+            var phoneInput = form.querySelector('input[name="smi_phone"]');
+            var agreeInput = form.querySelector('input[name="smi_agree"]');
+            var submitButton = form.querySelector("[data-smi-collab-submit]");
+            if (!phoneInput || !agreeInput || !submitButton) return;
+
+            var updateState = function () {
+                var isReady =
+                    onlyDigits(phoneInput.value).length >= 10 &&
+                    agreeInput.checked;
+
+                submitButton.disabled = !isReady;
+                submitButton.classList.toggle("is-disabled", !isReady);
+                submitButton.setAttribute("aria-disabled", isReady ? "false" : "true");
+            };
+
+            phoneInput.addEventListener("input", updateState);
+            phoneInput.addEventListener("blur", updateState);
+            phoneInput.addEventListener("countrychange", updateState);
+            agreeInput.addEventListener("change", updateState);
+
+            form.addEventListener("submit", function (event) {
+                updateState();
+                if (!submitButton.disabled) return;
+
+                event.preventDefault();
+                if (onlyDigits(phoneInput.value).length < 10) {
+                    phoneInput.focus();
+                }
+            });
+
+            updateState();
+        });
+    }
+
+    setupSmiCollabForm();
+
     // После серверного PRG-редиректа оставляем сообщение на странице,
     // но очищаем технические query-параметры из адресной строки.
     try {

@@ -35,11 +35,24 @@ $reject_text = trim((string) get_field('quiz_reject_text', $quiz_id));
 $reject_note = (string) get_field('quiz_reject_note', $quiz_id);
 $reject_button_text = trim((string) get_field('quiz_reject_button_text', $quiz_id));
 $reject_button_url = trim((string) get_field('quiz_reject_button_url', $quiz_id));
+$reject_contact_links = [
+    [
+        'label' => 'Telegram',
+        'url' => 'https://t.me/stepanov4at',
+        'modifier' => 'telegram',
+    ],
+    [
+        'label' => 'MAX',
+        'url' => 'https://max.ru/join/NWGhAqydAco8t8RH1UpJCBjAugWHI3TSQOdLrXnNShk',
+        'modifier' => 'max',
+    ],
+];
 $has_reject_block =
     $reject_title !== '' ||
     $reject_text !== '' ||
     trim(wp_strip_all_tags($reject_note)) !== '' ||
-    ($reject_button_text !== '' && $reject_button_url !== '');
+    ($reject_button_text !== '' && $reject_button_url !== '') ||
+    !empty($reject_contact_links);
 
 $quiz_form_status = isset($_GET['quiz_form_status'])
     ? sanitize_key(wp_unslash($_GET['quiz_form_status']))
@@ -138,6 +151,40 @@ $render_lead_form = static function (string $context) use ($quiz_id, $title): vo
     </div>
     <?php
 };
+
+$render_reject_actions = static function (
+    string $button_text,
+    string $button_url,
+    array $contact_links
+): void {
+    $button_url = trim($button_url);
+    $button_text = trim($button_text);
+    $static_urls = array_map(static function (array $link): string {
+        return rtrim($link['url'] ?? '', '/');
+    }, $contact_links);
+    ?>
+    <div class="calculator__result-actions">
+        <?php if ($button_text !== '' && $button_url !== '' && !in_array(rtrim($button_url, '/'), $static_urls, true)): ?>
+        <a class="calculator__result-btn" href="<?php echo esc_url($button_url); ?>" target="_blank" rel="noopener">
+            <?php echo esc_html($button_text); ?>
+        </a>
+        <?php endif; ?>
+        <?php foreach ($contact_links as $link): ?>
+        <?php
+            $label = trim((string) ($link['label'] ?? ''));
+            $url = trim((string) ($link['url'] ?? ''));
+            $modifier = sanitize_html_class((string) ($link['modifier'] ?? ''));
+            if ($label === '' || $url === '') {
+                continue;
+            }
+        ?>
+        <a class="calculator__result-btn<?php echo $modifier !== '' ? ' calculator__result-btn--' . esc_attr($modifier) : ''; ?>" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">
+            <?php echo esc_html($label); ?>
+        </a>
+        <?php endforeach; ?>
+    </div>
+    <?php
+};
 ?>
 
 <section class="calculator" id="calc-quiz">
@@ -210,11 +257,7 @@ $render_lead_form = static function (string $context) use ($quiz_id, $title): vo
                     <?php if (trim(wp_strip_all_tags($reject_note)) !== ''): ?>
                     <div class="calculator__result-note"><?php echo wp_kses_post($reject_note); ?></div>
                     <?php endif; ?>
-                    <?php if ($reject_button_text !== '' && $reject_button_url !== ''): ?>
-                    <a class="calculator__result-btn" href="<?php echo esc_url($reject_button_url); ?>" target="_blank" rel="noopener">
-                        <?php echo esc_html($reject_button_text); ?>
-                    </a>
-                    <?php endif; ?>
+                    <?php $render_reject_actions($reject_button_text, $reject_button_url, $reject_contact_links); ?>
                 </div>
                 <?php endif; ?>
 
@@ -260,11 +303,7 @@ $render_lead_form = static function (string $context) use ($quiz_id, $title): vo
                     <?php if (trim(wp_strip_all_tags($reject_note)) !== ''): ?>
                     <div class="calculator__result-note"><?php echo wp_kses_post($reject_note); ?></div>
                     <?php endif; ?>
-                    <?php if ($reject_button_text !== '' && $reject_button_url !== ''): ?>
-                    <a class="calculator__result-btn" href="<?php echo esc_url($reject_button_url); ?>" target="_blank" rel="noopener">
-                        <?php echo esc_html($reject_button_text); ?>
-                    </a>
-                    <?php endif; ?>
+                    <?php $render_reject_actions($reject_button_text, $reject_button_url, $reject_contact_links); ?>
                 </div>
                 <?php endif; ?>
 

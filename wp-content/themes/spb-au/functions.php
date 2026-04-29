@@ -1106,6 +1106,49 @@ function spbau_send_smi_lead_to_bitrix(
     return ["ok" => true, "message" => "Заявка отправлена. Скоро свяжемся с вами."];
 }
 
+function spbau_try_download_local_upload(string $file_url): bool
+{
+    $uploads = wp_get_upload_dir();
+    $base_url = rtrim((string) ($uploads["baseurl"] ?? ""), "/");
+    $base_dir = rtrim((string) ($uploads["basedir"] ?? ""), DIRECTORY_SEPARATOR);
+
+    if ($file_url === "" || $base_url === "" || $base_dir === "") {
+        return false;
+    }
+
+    if (strpos($file_url, $base_url . "/") !== 0) {
+        return false;
+    }
+
+    $relative_path = substr($file_url, strlen($base_url));
+    $relative_path = strtok($relative_path, "?#");
+    $file_path = realpath($base_dir . urldecode($relative_path));
+    $uploads_path = realpath($base_dir);
+
+    if (
+        !$file_path ||
+        !$uploads_path ||
+        strpos($file_path, $uploads_path . DIRECTORY_SEPARATOR) !== 0 ||
+        !is_file($file_path) ||
+        !is_readable($file_path)
+    ) {
+        return false;
+    }
+
+    $filename = basename($file_path);
+    nocache_headers();
+    header("Content-Type: application/octet-stream");
+    header(
+        "Content-Disposition: attachment; filename=\"" .
+            str_replace('"', "", $filename) .
+            "\"; filename*=UTF-8''" .
+            rawurlencode($filename),
+    );
+    header("Content-Length: " . filesize($file_path));
+    readfile($file_path);
+    return true;
+}
+
 function spbau_handle_smi_collab_submit(): void
 {
     $nonce_ok = isset($_POST["spbau_smi_collab_nonce"]) &&
@@ -1138,6 +1181,21 @@ function spbau_handle_smi_collab_submit(): void
     $agree = !empty($_POST["smi_agree"]);
     $digits = preg_replace("/\D+/", "", $phone_raw);
     $phone = $digits !== "" ? "+" . $digits : "";
+    $media_kit_url = esc_url_raw((string) get_field("smi_collab_btn_url", "option"));
+
+    if ($media_kit_url === "") {
+        wp_safe_redirect(
+            add_query_arg(
+                [
+                    "smi_form_status" => "error",
+                    "smi_form_message" =>
+                        "Файл медиакита не настроен.",
+                ],
+                $redirect,
+            ),
+        );
+        exit();
+    }
 
     if (strlen($digits) < 10) {
         wp_safe_redirect(
@@ -1168,6 +1226,15 @@ function spbau_handle_smi_collab_submit(): void
     }
 
     $result = spbau_send_smi_lead_to_bitrix($phone, $redirect);
+
+    if (!empty($result["ok"])) {
+        if (spbau_try_download_local_upload($media_kit_url)) {
+            exit();
+        }
+
+        wp_redirect($media_kit_url);
+        exit();
+    }
 
     wp_safe_redirect(
         add_query_arg(

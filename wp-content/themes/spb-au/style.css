@@ -1865,6 +1865,10 @@ a.breadcrumb__item:hover {
     flex: 1;
 }
 
+.faq-accordion__answer-inner ul,
+ul li {
+    list-style-type: inherit;
+}
 .single-article__meta-photo {
     width: 100px;
     height: 100px;
@@ -2048,7 +2052,28 @@ a.breadcrumb__item:hover {
 
 /* Local override for aggressive global reset: restore typography defaults
    inside article content, then apply theme styles below. */
-.single-article__content :where(h1, h2, h3, h4, h5, h6, p, ul, ol, li, blockquote, figure, figcaption, table, thead, tbody, tr, th, td) {
+.single-article__content
+    :where(
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        ul,
+        ol,
+        li,
+        blockquote,
+        figure,
+        figcaption,
+        table,
+        thead,
+        tbody,
+        tr,
+        th,
+        td
+    ) {
     margin: revert;
     padding: revert;
 }
@@ -2070,7 +2095,9 @@ a.breadcrumb__item:hover {
     list-style-position: outside;
 }
 
-.single-article__content ul:not(.single-article__toc-list) > li:not(.single-article__toc-item) {
+.single-article__content
+    ul:not(.single-article__toc-list)
+    > li:not(.single-article__toc-item) {
     list-style-type: disc;
 }
 
@@ -2206,7 +2233,9 @@ a.breadcrumb__item:hover {
     gap: 12px;
 }
 
-.single-article__content .wp-block-gallery.has-nested-images figure.wp-block-image {
+.single-article__content
+    .wp-block-gallery.has-nested-images
+    figure.wp-block-image {
     margin: 0;
 }
 
@@ -3349,6 +3378,16 @@ a.breadcrumb__item:hover {
     opacity: 0.92;
 }
 
+.calculator__result-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.calculator__result-btn--max {
+    background: #101340;
+}
+
 .calculator__notice {
     margin-top: 18px;
     border-radius: 16px;
@@ -3943,6 +3982,10 @@ a.breadcrumb__item:hover {
         font-size: 20px;
     }
 
+    .calculator__result-actions {
+        flex-direction: column;
+    }
+
     .calculator__notice {
         font-size: 16px;
         padding: 12px 14px;
@@ -4157,6 +4200,10 @@ a.breadcrumb__item:hover {
         font-size: 16px;
         padding: 14px 16px;
         border-radius: 14px;
+    }
+
+    .calculator__result-actions {
+        flex-direction: column;
     }
 
     .calculator__notice {
@@ -4631,6 +4678,15 @@ a.breadcrumb__item:hover {
     text-decoration: none;
     font-size: 15px;
     font-weight: 500;
+}
+
+.calc-widget__result-actions {
+    display: grid;
+    gap: 8px;
+}
+
+.calc-widget__result-btn--max {
+    background: #101340;
 }
 
 .calc-widget__lead {
@@ -7127,6 +7183,13 @@ a.breadcrumb__item:hover {
     gap: 12px;
 }
 
+.cases-preview__header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex-shrink: 0;
+}
+
 .cases-preview__title {
     font-family: "Onest", sans-serif;
     font-weight: 500;
@@ -7160,10 +7223,65 @@ a.breadcrumb__item:hover {
     display: none;
 }
 
-.cases-preview__grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+.cases-preview__nav {
+    display: flex;
+    gap: 10px;
+    flex-shrink: 0;
+}
+
+.cases-preview__prev,
+.cases-preview__next {
+    width: 48px;
+    height: 48px;
+    border: none;
+    border-radius: 50%;
+    background: #2d6bd9;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+        background 0.2s,
+        opacity 0.2s;
+}
+
+.cases-preview__prev:hover,
+.cases-preview__next:hover {
+    background: #1a53c0;
+}
+
+.cases-preview__prev.swiper-button-disabled,
+.cases-preview__next.swiper-button-disabled {
+    cursor: default;
+    opacity: 0.45;
+}
+
+.cases-preview__swiper {
+    overflow: hidden;
+    padding-bottom: 32px;
+}
+
+.cases-preview__slide {
+    height: auto;
+}
+
+.cases-preview__slide .cc {
+    height: 100%;
+}
+
+.cases-preview__scrollbar {
+    position: static !important;
+    margin-top: 24px;
+    width: 100%;
+    height: 8px !important;
+    background: rgba(45, 107, 217, 0.18);
+    border-radius: 999px;
+}
+
+.cases-preview__scrollbar .swiper-scrollbar-drag {
+    background: #2d6bd9;
+    border-radius: 999px;
 }
 
 /* ===== CC (case card, homepage) ===== */
@@ -11029,7 +11147,7 @@ a.breadcrumb__item:hover {
     border: none;
     background: transparent;
     font-weight: 400;
-    font-size: 16px;
+    font-size: 22px;
     line-height: 109%;
     letter-spacing: -0.01em;
     color: #000;
@@ -11102,6 +11220,12 @@ a.breadcrumb__item:hover {
 }
 .smi-collab__btn:hover {
     background: #f0f4ff;
+}
+.smi-collab__btn:disabled,
+.smi-collab__btn.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    background: rgba(255, 255, 255, 0.72);
 }
 .smi-collab__notice {
     border-radius: 10px;
@@ -13410,6 +13534,10 @@ a.breadcrumb__item:hover {
         gap: 10px;
     }
 
+    .homepage .cases-preview__header-actions {
+        width: 100%;
+    }
+
     .homepage .cases-preview__title {
         font-size: 28px;
         line-height: 118%;
@@ -13422,10 +13550,13 @@ a.breadcrumb__item:hover {
         padding: 11px 14px;
     }
 
-    .homepage .cases-preview__grid {
-        grid-template-columns: 1fr;
-        gap: 12px;
+    .homepage .cases-preview__swiper {
         margin-bottom: 14px;
+        padding-bottom: 28px;
+    }
+
+    .homepage .cases-preview__nav {
+        display: flex;
     }
 
     .homepage .cases-preview__header .cases-preview__btn {
@@ -13441,10 +13572,6 @@ a.breadcrumb__item:hover {
         border-radius: 999px;
         font-size: 18px;
         line-height: 1.1;
-    }
-
-    .homepage .cases-preview__grid .cc:not(:first-child) {
-        display: none;
     }
 
     .homepage .cc {

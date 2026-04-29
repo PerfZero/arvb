@@ -62,11 +62,24 @@ $reject_text = trim((string) get_field('quiz_reject_text', $quiz_id));
 $reject_note = (string) get_field('quiz_reject_note', $quiz_id);
 $reject_button_text = trim((string) get_field('quiz_reject_button_text', $quiz_id));
 $reject_button_url = trim((string) get_field('quiz_reject_button_url', $quiz_id));
+$reject_contact_links = [
+    [
+        'label' => 'Telegram',
+        'url' => 'https://t.me/stepanov4at',
+        'modifier' => 'telegram',
+    ],
+    [
+        'label' => 'MAX',
+        'url' => 'https://max.ru/join/NWGhAqydAco8t8RH1UpJCBjAugWHI3TSQOdLrXnNShk',
+        'modifier' => 'max',
+    ],
+];
 $has_reject_block =
     $reject_title !== '' ||
     $reject_text !== '' ||
     trim(wp_strip_all_tags($reject_note)) !== '' ||
-    ($reject_button_text !== '' && $reject_button_url !== '');
+    ($reject_button_text !== '' && $reject_button_url !== '') ||
+    !empty($reject_contact_links);
 
 if ($single_selection_type !== 'multiple') {
     $single_selection_type = 'single';
@@ -124,6 +137,9 @@ $is_multiple = $single_selection_type === 'multiple';
 $input_type = $is_multiple ? 'checkbox' : 'radio';
 $widget_id = wp_unique_id('calc-widget-');
 $input_name = $widget_id . ($is_multiple ? '-debt[]' : '-debt');
+$static_reject_urls = array_map(static function (array $link): string {
+    return rtrim($link['url'] ?? '', '/');
+}, $reject_contact_links);
 ?>
 <div class="calc-widget" id="<?php echo esc_attr($widget_id); ?>">
     <h3 class="calc-widget__title"><?php echo esc_html($title); ?></h3>
@@ -166,11 +182,26 @@ $input_name = $widget_id . ($is_multiple ? '-debt[]' : '-debt');
         <?php if (trim(wp_strip_all_tags($reject_note)) !== ''): ?>
         <div class="calc-widget__result-note"><?php echo wp_kses_post($reject_note); ?></div>
         <?php endif; ?>
-        <?php if ($reject_button_text !== '' && $reject_button_url !== ''): ?>
-        <a class="calc-widget__result-btn" href="<?php echo esc_url($reject_button_url); ?>" target="_blank" rel="noopener">
-            <?php echo esc_html($reject_button_text); ?>
-        </a>
-        <?php endif; ?>
+        <div class="calc-widget__result-actions">
+            <?php if ($reject_button_text !== '' && $reject_button_url !== '' && !in_array(rtrim($reject_button_url, '/'), $static_reject_urls, true)): ?>
+            <a class="calc-widget__result-btn" href="<?php echo esc_url($reject_button_url); ?>" target="_blank" rel="noopener">
+                <?php echo esc_html($reject_button_text); ?>
+            </a>
+            <?php endif; ?>
+            <?php foreach ($reject_contact_links as $link): ?>
+            <?php
+                $label = trim((string) ($link['label'] ?? ''));
+                $url = trim((string) ($link['url'] ?? ''));
+                $modifier = sanitize_html_class((string) ($link['modifier'] ?? ''));
+                if ($label === '' || $url === '') {
+                    continue;
+                }
+            ?>
+            <a class="calc-widget__result-btn<?php echo $modifier !== '' ? ' calc-widget__result-btn--' . esc_attr($modifier) : ''; ?>" href="<?php echo esc_url($url); ?>" target="_blank" rel="noopener">
+                <?php echo esc_html($label); ?>
+            </a>
+            <?php endforeach; ?>
+        </div>
     </div>
     <?php endif; ?>
 

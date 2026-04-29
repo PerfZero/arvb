@@ -620,7 +620,7 @@ $h_ticker = get_field("hero_ticker");
 
     $cases_q = new WP_Query([
         "post_type" => "case",
-        "posts_per_page" => 4,
+        "posts_per_page" => 10,
         "post_status" => "publish",
         "orderby" => "menu_order",
         "order" => "ASC",
@@ -644,24 +644,43 @@ $h_ticker = get_field("hero_ticker");
                     ); ?></h2>
                     <?php endif; ?>
                 </div>
-                <?php if ($cases_btn_url): ?>
-                <a href="<?php echo esc_url(
-                    $cases_btn_url,
-                ); ?>" class="cases-preview__btn">
-                    <?php echo esc_html($cases_btn_t); ?>
-                </a>
-                <?php endif; ?>
+                <div class="cases-preview__header-actions">
+                    <div class="cases-preview__nav" aria-label="Навигация по завершённым делам">
+                        <button class="cases-preview__prev" type="button" aria-label="Предыдущее дело">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                        <button class="cases-preview__next" type="button" aria-label="Следующее дело">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M9 6L15 12L9 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <?php if ($cases_btn_url): ?>
+                    <a href="<?php echo esc_url(
+                        $cases_btn_url,
+                    ); ?>" class="cases-preview__btn">
+                        <?php echo esc_html($cases_btn_t); ?>
+                    </a>
+                    <?php endif; ?>
+                </div>
             </div>
 
-            <div class="cases-preview__grid">
-                <?php
-                while ($cases_q->have_posts()):
-                    $cases_q->the_post(); ?>
-                    <?php get_template_part("template-parts/case-card"); ?>
-                <?php
-                endwhile;
-                wp_reset_postdata();
-                ?>
+            <div class="swiper cases-preview__swiper">
+                <div class="swiper-wrapper">
+                    <?php
+                    while ($cases_q->have_posts()):
+                        $cases_q->the_post(); ?>
+                        <div class="swiper-slide cases-preview__slide">
+                            <?php get_template_part("template-parts/case-card"); ?>
+                        </div>
+                    <?php
+                    endwhile;
+                    wp_reset_postdata();
+                    ?>
+                </div>
+                <div class="swiper-scrollbar cases-preview__scrollbar"></div>
             </div>
             <?php if ($cases_btn_url): ?>
             <a href="<?php echo esc_url(
@@ -672,6 +691,43 @@ $h_ticker = get_field("hero_ticker");
             <?php endif; ?>
         </div>
     </section>
+    <script>
+    window.addEventListener('load', function () {
+        var casesSwiperEl = document.querySelector('.cases-preview__swiper');
+        if (!casesSwiperEl || typeof Swiper === 'undefined') {
+            return;
+        }
+
+        var slidesCount = casesSwiperEl.querySelectorAll('.swiper-slide').length;
+        var casesSwiperOptions = {
+            slidesPerView: 1.05,
+            spaceBetween: 16,
+            grabCursor: true,
+            scrollbar: {
+                el: '.cases-preview__scrollbar',
+                draggable: true,
+                dragSize: 120,
+            },
+            navigation: {
+                prevEl: '.cases-preview__prev',
+                nextEl: '.cases-preview__next',
+            },
+            breakpoints: {
+                700: { slidesPerView: 2.05 },
+                1100: { slidesPerView: 3.05 },
+                1500: { slidesPerView: 4 },
+            },
+        };
+
+        if (slidesCount <= 1) {
+            casesSwiperOptions.slidesPerView = 1;
+            casesSwiperOptions.spaceBetween = 0;
+            casesSwiperOptions.allowTouchMove = false;
+        }
+
+        new Swiper(casesSwiperEl, casesSwiperOptions);
+    });
+    </script>
     <?php get_template_part("template-parts/cta-banner"); ?>
 
 
