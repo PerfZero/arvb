@@ -1297,6 +1297,13 @@ $stats_cards = get_field("stats_cards") ?: []; ?>
         var teamSwiperOptions = {
             slidesPerView: 1.15,
             spaceBetween: 18,
+            grabCursor: true,
+            mousewheel: {
+                enabled: true,
+                forceToAxis: false,
+                releaseOnEdges: true,
+                sensitivity: 0.9,
+            },
             scrollbar: { el: '.team-home__scrollbar', draggable: true, dragSize: 120 },
             breakpoints: {
                 600:  { slidesPerView: 2.05 },

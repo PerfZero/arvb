@@ -14,7 +14,7 @@ $reviews_link = get_post_type_archive_link("review") ?: home_url("/review/");
 
 $contacts_phone = trim((string) get_field("contacts_phone", "option"));
 $contacts_hours = trim((string) get_field("contacts_hours", "option"));
-$contacts_address = trim((string) get_field("contacts_address", "option"));
+$contacts_address = "Санкт-Петербург, улица Чайковского, 1, корп. 2, 191187";
 
 $footer_form_title = trim((string) get_field("footer_form_title", "option"));
 $footer_form_label = trim((string) get_field("footer_form_label", "option"));
@@ -42,10 +42,6 @@ if ($contacts_phone === "") {
 }
 if ($contacts_hours === "") {
     $contacts_hours = "9:00–21:00";
-}
-if ($contacts_address === "") {
-    $contacts_address =
-        "195197, г. Санкт-Петербург,<br>ул. Бестужевская, дом 7,<br>корпус 3, квартира 379";
 }
 if ($footer_form_title === "") {
     $footer_form_title = "Задать вопрос";
@@ -168,7 +164,7 @@ foreach ($footer_messengers as $messenger) {
                     ); ?></span>
                 </div>
                 <div class="footer-contact-item">
-                    <span class="footer-contact-label">Юр. адрес:</span>
+                    <span class="footer-contact-label">Наш адрес:</span>
                     <span class="footer-contact-value"><?php echo wp_kses_post(
                         $contacts_address,
                     ); ?></span>

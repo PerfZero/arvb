@@ -17,7 +17,7 @@ $args = [
     "posts_per_page" => 12,
     "post_status" => "publish",
     "orderby" => "date",
-    "order" => "DESC",
+    "order" => "ASC",
     "paged" => $paged,
 ];
 

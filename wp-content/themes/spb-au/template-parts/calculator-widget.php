@@ -14,7 +14,29 @@ if (!function_exists('spbau_get_active_quiz_id')) {
     return;
 }
 
+// Fallback chain:
+// 1) sidebar/widget quiz for current context
+// 2) page main quiz for current context (already used on site)
+// 3) latest published quiz (last resort, so sidebar is never empty)
 $quiz_id = (int) spbau_get_active_quiz_id('widget');
+if ($quiz_id <= 0) {
+    $quiz_id = (int) spbau_get_active_quiz_id('main');
+}
+if ($quiz_id <= 0) {
+    $fallback_quizzes = get_posts([
+        'post_type' => 'quiz',
+        'post_status' => 'publish',
+        'posts_per_page' => 1,
+        'orderby' => 'date',
+        'order' => 'DESC',
+        'fields' => 'ids',
+        'no_found_rows' => true,
+        'suppress_filters' => true,
+    ]);
+    if (!empty($fallback_quizzes)) {
+        $quiz_id = (int) $fallback_quizzes[0];
+    }
+}
 if ($quiz_id <= 0) {
     return;
 }

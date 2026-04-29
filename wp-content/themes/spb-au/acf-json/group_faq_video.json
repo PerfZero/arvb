@@ -48,6 +48,29 @@
             "mime_types": ""
         },
         {
+            "key": "field_fv_order",
+            "label": "Порядок",
+            "name": "fv_order",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Позиция в слайдере. Меньше число — выше в списке.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": 0,
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": 1,
+            "prepend": "",
+            "append": ""
+        },
+        {
             "key": "field_fv_source_label",
             "label": "Подпись источника (необязательно)",
             "name": "fv_source_label",

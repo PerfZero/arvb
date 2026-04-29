@@ -78,6 +78,13 @@ window.addEventListener('load', function () {
     new Swiper('.faq-vid__swiper', {
         slidesPerView: 1.3,
         spaceBetween: 16,
+        grabCursor: true,
+        mousewheel: {
+            enabled: true,
+            forceToAxis: false,
+            releaseOnEdges: true,
+            sensitivity: 0.9,
+        },
         scrollbar: { el: '.faq-vid__scrollbar', draggable: true, dragSize: 120 },
         navigation: { prevEl: '.faq-vid__prev', nextEl: '.faq-vid__next' },
         breakpoints: {

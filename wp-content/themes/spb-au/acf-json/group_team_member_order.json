@@ -1,0 +1,49 @@
+{
+    "key": "group_team_member_order",
+    "title": "Команда: Порядок",
+    "fields": [
+        {
+            "key": "field_tm_order",
+            "label": "Порядок",
+            "name": "tm_order",
+            "aria-label": "",
+            "type": "number",
+            "instructions": "Позиция в блоке команды. Меньше число — выше в списке.",
+            "required": 0,
+            "conditional_logic": 0,
+            "wrapper": {
+                "width": "33",
+                "class": "",
+                "id": ""
+            },
+            "default_value": "",
+            "min": 0,
+            "max": "",
+            "allow_in_bindings": 0,
+            "placeholder": "",
+            "step": 1,
+            "prepend": "",
+            "append": ""
+        }
+    ],
+    "location": [
+        [
+            {
+                "param": "post_type",
+                "operator": "==",
+                "value": "team_member"
+            }
+        ]
+    ],
+    "menu_order": 0,
+    "position": "side",
+    "style": "default",
+    "label_placement": "top",
+    "instruction_placement": "label",
+    "hide_on_screen": [],
+    "active": true,
+    "description": "",
+    "show_in_rest": false,
+    "display_title": "",
+    "modified": 1777441200
+}

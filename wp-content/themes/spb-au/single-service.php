@@ -43,7 +43,13 @@ $image    = get_field('service_hero_image');
             <h2 class="blog-preview__title">Блог</h2>
             <div class="blog-preview__grid">
                 <?php
-                $blog = new WP_Query(['post_type' => 'post', 'posts_per_page' => 3, 'post_status' => 'publish']);
+                $blog = new WP_Query([
+                    'post_type'      => 'post',
+                    'posts_per_page' => 3,
+                    'post_status'    => 'publish',
+                    'orderby'        => 'date',
+                    'order'          => 'ASC',
+                ]);
                 while ($blog->have_posts()): $blog->the_post();
                     get_template_part('template-parts/article-card');
                 endwhile;

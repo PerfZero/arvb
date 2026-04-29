@@ -8,7 +8,7 @@ get_header();
 
 $phone   = get_field('contacts_phone',   'option');
 $hours   = get_field('contacts_hours',   'option');
-$address = get_field('contacts_address', 'option');
+$address = 'Санкт-Петербург, улица Чайковского, 1, корп. 2, 191187';
 $map     = get_field('contacts_map',     'option');
 ?>
 
@@ -41,7 +41,7 @@ $map     = get_field('contacts_map',     'option');
 
                 <?php if ($address): ?>
                 <div class="contacts-info-group">
-                    <span class="contacts-info-label">Юр. адрес:</span>
+                    <span class="contacts-info-label">Наш адрес:</span>
                     <p class="contacts-address"><?php echo wp_kses_post($address); ?></p>
                 </div>
                 <?php endif; ?>

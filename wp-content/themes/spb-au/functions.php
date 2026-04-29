@@ -3,6 +3,8 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
+require_once get_template_directory() . "/inc/hh-vacancy-seed.php";
+
 // ACF Options Page
 if (function_exists("acf_add_options_page")) {
     acf_add_options_page([
@@ -81,6 +83,91 @@ add_filter(
 
 remove_action("wp_head", "wp_global_styles_render_svg_filters");
 
+function spbau_render_toc_block(array $attributes = [], string $content = ""): string
+{
+    $title = isset($attributes["title"]) && is_string($attributes["title"])
+        ? trim($attributes["title"])
+        : "";
+    if ($title === "") {
+        $title = "Содержание статьи";
+    }
+
+    $include_h3 = !empty($attributes["includeH3"]);
+    $target_selector =
+        isset($attributes["targetSelector"]) &&
+        is_string($attributes["targetSelector"]) &&
+        trim($attributes["targetSelector"]) !== ""
+            ? trim($attributes["targetSelector"])
+            : ".single-article__content";
+
+    $headings_selector = $include_h3 ? "h2,h3" : "h2";
+
+    $icon_url = get_template_directory_uri() . "/images/book.svg";
+    $wrapper_attrs = get_block_wrapper_attributes([
+        "class" => "single-article__toc spbau-toc-block",
+        "data-target-selector" => $target_selector,
+        "data-headings-selector" => $headings_selector,
+    ]);
+
+    ob_start();
+    ?>
+    <nav <?php echo $wrapper_attrs; ?>>
+        <h2 class="single-article__toc-title">
+            <img src="<?php echo esc_url($icon_url); ?>" width="16" height="16" alt="">
+            <?php echo esc_html($title); ?>
+        </h2>
+        <ul class="single-article__toc-list" data-spbau-toc-list></ul>
+    </nav>
+    <?php
+
+    return (string) ob_get_clean();
+}
+
+add_action("init", static function (): void {
+    if (!function_exists("register_block_type")) {
+        return;
+    }
+
+    $version = wp_get_theme()->get("Version");
+    $dir_uri = get_template_directory_uri();
+    wp_register_script(
+        "spbau-toc-block-editor",
+        $dir_uri . "/js/toc-block-editor.js",
+        ["wp-blocks", "wp-element", "wp-components", "wp-block-editor", "wp-server-side-render"],
+        $version,
+        true,
+    );
+
+    wp_register_script(
+        "spbau-toc-block-frontend",
+        $dir_uri . "/js/toc-block-frontend.js",
+        [],
+        $version,
+        true,
+    );
+
+    register_block_type("spbau/toc", [
+        "api_version" => 2,
+        "editor_script" => "spbau-toc-block-editor",
+        "script" => "spbau-toc-block-frontend",
+        "render_callback" => "spbau_render_toc_block",
+        "attributes" => [
+            "title" => [
+                "type" => "string",
+                "default" => "Содержание статьи",
+            ],
+            "includeH3" => [
+                "type" => "boolean",
+                "default" => true,
+            ],
+            "targetSelector" => [
+                "type" => "string",
+                "default" => ".single-article__content",
+            ],
+        ],
+    ]);
+});
+
 // ACF JSON — сохранять/загружать из папки темы
 add_filter("acf/settings/save_json", function () {
     return get_stylesheet_directory() . "/acf-json";
@@ -96,6 +183,43 @@ add_filter("acf/load_field_group", static function (array $group): array {
     }
     return $group;
 });
+
+function spbau_sync_acf_order_to_menu_order($post_id): void
+{
+    static $is_syncing = false;
+    if ($is_syncing || !is_numeric($post_id)) {
+        return;
+    }
+
+    $post_id = (int) $post_id;
+    $post_type = get_post_type($post_id);
+    if (!in_array($post_type, ["faq_video", "team_member"], true)) {
+        return;
+    }
+
+    $field_name = $post_type === "faq_video" ? "fv_order" : "tm_order";
+    $raw_value = function_exists("get_field")
+        ? get_field($field_name, $post_id)
+        : get_post_meta($post_id, $field_name, true);
+
+    if ($raw_value === null || $raw_value === "") {
+        return;
+    }
+
+    $new_order = (int) $raw_value;
+    $current_order = (int) get_post_field("menu_order", $post_id);
+    if ($new_order === $current_order) {
+        return;
+    }
+
+    $is_syncing = true;
+    wp_update_post([
+        "ID" => $post_id,
+        "menu_order" => $new_order,
+    ]);
+    $is_syncing = false;
+}
+add_action("acf/save_post", "spbau_sync_acf_order_to_menu_order");
 
 // Кастомный тип записей: Услуги
 add_action("init", static function (): void {
@@ -398,9 +522,78 @@ function spbau_vk_embed_url(string $url): string
 
 function spbau_reading_time(string $content = ""): int
 {
-    $words = str_word_count(wp_strip_all_tags($content));
+    $text = wp_strip_all_tags(strip_shortcodes($content));
+    preg_match_all("/[\\p{L}\\p{N}]+/u", $text, $matches);
+    $words = isset($matches[0]) ? count($matches[0]) : 0;
     return max(1, (int) ceil($words / 200));
 }
+
+function spbau_get_post_views(int $post_id): int
+{
+    if ($post_id <= 0) {
+        return 0;
+    }
+
+    $keys = ["post_views_count", "views", "page_views"];
+    foreach ($keys as $key) {
+        $value = (int) get_post_meta($post_id, $key, true);
+        if ($value > 0) {
+            return $value;
+        }
+    }
+
+    return 0;
+}
+
+function spbau_set_post_views(int $post_id, int $views): void
+{
+    if ($post_id <= 0) {
+        return;
+    }
+
+    $views = max(0, $views);
+    update_post_meta($post_id, "post_views_count", $views);
+    update_post_meta($post_id, "views", $views);
+    update_post_meta($post_id, "page_views", $views);
+}
+
+function spbau_track_post_view(): void
+{
+    if (
+        is_admin() ||
+        wp_doing_ajax() ||
+        is_feed() ||
+        is_preview() ||
+        is_robots() ||
+        is_trackback()
+    ) {
+        return;
+    }
+
+    if (!is_singular("post")) {
+        return;
+    }
+
+    $post_id = (int) get_queried_object_id();
+    if ($post_id <= 0) {
+        return;
+    }
+
+    $cookie_name = "spbau_post_viewed_" . $post_id;
+    if (isset($_COOKIE[$cookie_name])) {
+        return;
+    }
+
+    $current = spbau_get_post_views($post_id);
+    spbau_set_post_views($post_id, $current + 1);
+
+    $expire = time() + 6 * HOUR_IN_SECONDS;
+    $path = defined("COOKIEPATH") && COOKIEPATH ? COOKIEPATH : "/";
+    $domain = defined("COOKIE_DOMAIN") ? COOKIE_DOMAIN : "";
+    setcookie($cookie_name, "1", $expire, $path, $domain, is_ssl(), true);
+    $_COOKIE[$cookie_name] = "1";
+}
+add_action("template_redirect", "spbau_track_post_view", 20);
 
 add_action("wp_enqueue_scripts", static function (): void {
     $swiper_templates = ['page-loyalty.php', 'page-reviews.php'];
