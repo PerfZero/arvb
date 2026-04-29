@@ -44,9 +44,10 @@ $consent = get_field('consultmodal_consent', 'option') ?: 'Отправляя ф
                     <label class="consult-modal__label">Способ связи</label>
                     <div class="consult-modal__select-wrap">
                         <select name="cm_contact" class="consult-modal__select">
-                            <option value="call">Позвоните мне</option>
+                            <option value="call">Телефон</option>
                             <option value="whatsapp">WhatsApp</option>
                             <option value="telegram">Telegram</option>
+                            <option value="max">MAX</option>
                         </select>
                     </div>
                 </div>

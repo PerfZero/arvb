@@ -156,7 +156,7 @@ $i = 0;
                         $creditors = (int) get_field("case_creditors_count");
                         $problem = get_field("case_problem");
                         $photo = get_field("case_photo");
-                        $placeholder_photo = get_template_directory_uri() . "/images/case-placeholder.svg";
+                        $case_image = spbau_get_case_image($photo, get_the_ID(), get_the_title());
                         $docs = get_field("case_docs");
                         $video_source = get_field("case_video_source");
                         $video = get_field("case_video");
@@ -350,7 +350,7 @@ $i = 0;
                         </div>
 
                         <div class="case-card__photo">
-                            <img src="<?php echo esc_url($photo["url"] ?? $placeholder_photo); ?>" alt="<?php echo esc_attr($photo["alt"] ?? ""); ?>">
+                            <img src="<?php echo esc_url($case_image["url"]); ?>" alt="<?php echo esc_attr($case_image["alt"]); ?>">
                         </div>
                     </div>
                 </article>

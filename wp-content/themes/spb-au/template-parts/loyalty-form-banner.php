@@ -34,9 +34,10 @@ $form_message = isset($_GET['lfbanner_message']) ? sanitize_text_field(wp_unslas
                     <label class="lf-banner__label">Способ связи</label>
                     <div class="lf-banner__select-wrap">
                         <select name="lf_contact" class="lf-banner__select">
-                            <option value="call">Позвоните мне</option>
+                            <option value="call">Телефон</option>
                             <option value="whatsapp">WhatsApp</option>
                             <option value="telegram">Telegram</option>
+                            <option value="max">MAX</option>
                             <option value="email">Email</option>
                         </select>
                     </div>

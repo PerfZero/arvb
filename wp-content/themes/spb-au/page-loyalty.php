@@ -278,9 +278,10 @@ $form_btn   = get_field('loy_form_btn')   ?: 'Получить консульт�
                 <div class="loy-consult__field">
                     <label>Способ связи</label>
                     <select name="contact_method">
-                        <option value="">Позвоните мне</option>
+                        <option value="">Телефон</option>
                         <option value="whatsapp">WhatsApp</option>
                         <option value="telegram">Telegram</option>
+                        <option value="max">MAX</option>
                         <option value="email">Email</option>
                     </select>
                     <label class="loy-consult__consent">

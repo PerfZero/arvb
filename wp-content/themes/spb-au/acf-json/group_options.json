@@ -1329,6 +1329,31 @@
             "append": ""
         },
         {
+            "key": "field_cases_fallback_image",
+            "label": "Картинка по умолчанию для дел",
+            "name": "cases_fallback_image",
+            "aria-label": "",
+            "type": "image",
+            "instructions": "Показывается в карточках и на странице дела, если у конкретного дела не задано фото. Позже можно заменить на скрин документа.",
+            "required": 0,
+            "conditional_logic": false,
+            "wrapper": {
+                "width": "",
+                "class": "",
+                "id": ""
+            },
+            "return_format": "array",
+            "preview_size": "medium",
+            "library": "all",
+            "min_width": 0,
+            "min_height": 0,
+            "min_size": 0,
+            "max_width": 0,
+            "max_height": 0,
+            "max_size": 0,
+            "mime_types": ""
+        },
+        {
             "key": "field_tab_stats_cards",
             "label": "Карточки со статистикой",
             "name": "",
@@ -2177,5 +2202,5 @@
     "description": "",
     "show_in_rest": false,
     "display_title": "",
-    "modified": 1777062700
+    "modified": 1777450877
 }

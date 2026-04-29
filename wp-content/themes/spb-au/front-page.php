@@ -1217,9 +1217,10 @@ $stats_cards = get_field("stats_cards") ?: []; ?>
                             <label class="cons__label">Способ связи</label>
                             <div class="cons__select-wrap">
                                 <select name="cons_contact" class="cons__select">
-                                    <option value="call">Позвоните мне</option>
+                                    <option value="call">Телефон</option>
                                     <option value="whatsapp">WhatsApp</option>
                                     <option value="telegram">Telegram</option>
+                                    <option value="max">MAX</option>
                                 </select>
                             </div>
                         </div>

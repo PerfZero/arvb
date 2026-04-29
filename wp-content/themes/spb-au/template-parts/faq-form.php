@@ -50,9 +50,10 @@ $form_message = isset($_GET["faqform_message"])
                                 <label class="faq-form__label">Способ связи</label>
                                 <div class="faq-form__select-wrap">
                                     <select name="faqform_contact" class="faq-form__select">
-                                        <option value="call">Позвоните мне</option>
+                                        <option value="call">Телефон</option>
                                         <option value="whatsapp">WhatsApp</option>
                                         <option value="telegram">Telegram</option>
+                                        <option value="max">MAX</option>
                                     </select>
                                 </div>
                             </div>

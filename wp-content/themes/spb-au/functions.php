@@ -177,6 +177,73 @@ add_filter("acf/settings/load_json", function ($paths) {
     return $paths;
 });
 
+function spbau_get_image_data($image, string $fallback_alt = ""): array
+{
+    $url = "";
+    $alt = "";
+
+    if (is_array($image) && !empty($image["url"])) {
+        $url = (string) $image["url"];
+        $alt = (string) ($image["alt"] ?? "");
+    } elseif (is_numeric($image)) {
+        $attachment_id = (int) $image;
+        $url = (string) wp_get_attachment_url($attachment_id);
+        $alt = (string) get_post_meta($attachment_id, "_wp_attachment_image_alt", true);
+    } elseif (is_string($image) && $image !== "") {
+        $url = $image;
+    }
+
+    if ($alt === "") {
+        $alt = $fallback_alt;
+    }
+
+    return [
+        "url" => $url,
+        "alt" => $alt,
+    ];
+}
+
+function spbau_get_case_fallback_image(string $fallback_alt = ""): array
+{
+    $fallback = function_exists("get_field")
+        ? get_field("cases_fallback_image", "option")
+        : null;
+    $image = spbau_get_image_data($fallback, $fallback_alt);
+
+    if ($image["url"] === "") {
+        $image["url"] = get_template_directory_uri() . "/images/case-placeholder.svg";
+    }
+    if ($image["alt"] === "") {
+        $image["alt"] = $fallback_alt;
+    }
+
+    return $image;
+}
+
+function spbau_get_case_image($image = null, int $post_id = 0, string $fallback_alt = ""): array
+{
+    $image_data = spbau_get_image_data($image, $fallback_alt);
+    if ($image_data["url"] !== "") {
+        return $image_data;
+    }
+
+    $post_id = $post_id > 0 ? $post_id : get_the_ID();
+    if ($post_id && has_post_thumbnail($post_id)) {
+        $thumbnail_id = (int) get_post_thumbnail_id($post_id);
+        $thumbnail_src = wp_get_attachment_image_src($thumbnail_id, "full");
+        if (is_array($thumbnail_src) && !empty($thumbnail_src[0])) {
+            $image_data["url"] = (string) $thumbnail_src[0];
+            $image_data["alt"] = (string) get_post_meta($thumbnail_id, "_wp_attachment_image_alt", true);
+            if ($image_data["alt"] === "") {
+                $image_data["alt"] = $fallback_alt;
+            }
+            return $image_data;
+        }
+    }
+
+    return spbau_get_case_fallback_image($fallback_alt);
+}
+
 add_filter("acf/load_field_group", static function (array $group): array {
     if (($group["key"] ?? "") === "group_quiz_assignment") {
         $group["active"] = false;
@@ -1304,7 +1371,20 @@ function spbau_bitrix_calendar_get_events(string $from_iso, string $to_iso): arr
 
 function spbau_booking_times(): array
 {
-    return ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00"];
+    return [
+        "10:00",
+        "11:00",
+        "12:00",
+        "13:00",
+        "14:00",
+        "15:00",
+        "16:00",
+        "17:00",
+        "18:00",
+        "19:00",
+        "20:00",
+        "20:45",
+    ];
 }
 
 function spbau_booking_busy_map(array $days, array $times): array
@@ -1601,11 +1681,12 @@ function spbau_handle_booking_submit(): void
     }
 
     $contact_map = [
-        "phone" => "Позвонить",
+        "phone" => "Телефон",
         "whatsapp" => "WhatsApp",
         "telegram" => "Telegram",
+        "max" => "MAX",
     ];
-    $contact_text = $contact_map[$contact] ?? "Позвонить";
+    $contact_text = $contact_map[$contact] ?? "Телефон";
 
     $lead_result = spbau_send_smi_lead_to_bitrix(
         $phone,
@@ -1753,11 +1834,12 @@ function spbau_handle_faqform_submit(): void
     }
 
     $contact_map = [
-        "call" => "Позвоните мне",
+        "call" => "Телефон",
         "whatsapp" => "WhatsApp",
         "telegram" => "Telegram",
+        "max" => "MAX",
     ];
-    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+    $contact_text = $contact_map[$contact] ?? "Телефон";
 
     $extra = "Форма: FAQ\n" . "Способ связи: " . $contact_text;
     if ($question !== "") {
@@ -1824,8 +1906,8 @@ function spbau_handle_lfbanner_submit(): void
         exit();
     }
 
-    $contact_map  = ["call" => "Позвоните мне", "whatsapp" => "WhatsApp", "telegram" => "Telegram", "email" => "Email"];
-    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+    $contact_map  = ["call" => "Телефон", "whatsapp" => "WhatsApp", "telegram" => "Telegram", "max" => "MAX", "email" => "Email"];
+    $contact_text = $contact_map[$contact] ?? "Телефон";
     $extra        = "Форма: Программа лояльности\nСпособ связи: " . $contact_text;
 
     $result = spbau_send_smi_lead_to_bitrix(
@@ -1993,8 +2075,8 @@ function spbau_handle_consultmodal_submit(): void
         exit();
     }
 
-    $contact_map  = ["call" => "Позвоните мне", "whatsapp" => "WhatsApp", "telegram" => "Telegram"];
-    $contact_text = $contact_map[$contact] ?? "Позвоните мне";
+    $contact_map  = ["call" => "Телефон", "whatsapp" => "WhatsApp", "telegram" => "Telegram", "max" => "MAX"];
+    $contact_text = $contact_map[$contact] ?? "Телефон";
     $extra        = "Форма: Бесплатная консультация (попап)\nСпособ связи: " . $contact_text;
 
     $result = spbau_send_smi_lead_to_bitrix(

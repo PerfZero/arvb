@@ -6,12 +6,12 @@ $cc_amount = get_field('case_amount');
 $cc_number = get_field('case_number');
 $cc_docs   = get_field('case_docs');
 $cc_photo  = get_field('case_photo');
-$cc_placeholder = get_template_directory_uri() . "/images/case-placeholder.svg";
+$cc_image  = spbau_get_case_image($cc_photo, get_the_ID(), get_the_title());
 ?>
 <div class="cc">
 
     <a href="<?php the_permalink(); ?>" class="cc__photo">
-        <img src="<?php echo esc_url($cc_photo['url'] ?? $cc_placeholder); ?>" alt="<?php echo esc_attr($cc_photo['alt'] ?? ''); ?>">
+        <img src="<?php echo esc_url($cc_image['url']); ?>" alt="<?php echo esc_attr($cc_image['alt']); ?>">
     </a>
 
     <div class="cc__body">

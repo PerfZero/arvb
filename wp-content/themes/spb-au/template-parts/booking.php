@@ -43,7 +43,9 @@ for ($i = 0; $i < 7; $i++) {
     ];
 }
 
-$times = function_exists("spbau_booking_times") ? spbau_booking_times() : ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
+$times = function_exists("spbau_booking_times")
+    ? spbau_booking_times()
+    : ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','20:45'];
 $tz = wp_timezone();
 $now_ts = current_time('timestamp');
 ?>
@@ -142,9 +144,10 @@ $now_ts = current_time('timestamp');
                 <label class="booking-modal__field">
                     <span>Способ связи</span>
                     <select name="booking_contact">
-                        <option value="phone">Позвоните мне</option>
+                        <option value="phone">Телефон</option>
                         <option value="whatsapp">WhatsApp</option>
                         <option value="telegram">Telegram</option>
+                        <option value="max">MAX</option>
                     </select>
                 </label>
 

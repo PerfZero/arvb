@@ -15,29 +15,9 @@ $docs        = get_field('case_docs');
 $review      = get_field('case_review_text');
 $archive_title = get_field('cases_archive_title', 'option') ?: 'Завершённые дела';
 $case_photo  = get_field('case_photo');
-$case_photo_url = '';
-$case_photo_alt = '';
-$case_placeholder = get_template_directory_uri() . '/images/case-placeholder.svg';
-if (is_array($case_photo) && !empty($case_photo['url'])) {
-    $case_photo_url = (string) $case_photo['url'];
-    $case_photo_alt = (string) ($case_photo['alt'] ?? '');
-} elseif (is_numeric($case_photo)) {
-    $case_photo_url = (string) wp_get_attachment_url((int) $case_photo);
-}
-if ($case_photo_url === '' && has_post_thumbnail()) {
-    $thumb_id = (int) get_post_thumbnail_id();
-    $thumb_src = wp_get_attachment_image_src($thumb_id, 'full');
-    if (is_array($thumb_src) && !empty($thumb_src[0])) {
-        $case_photo_url = (string) $thumb_src[0];
-        $case_photo_alt = (string) get_post_meta($thumb_id, '_wp_attachment_image_alt', true);
-    }
-}
-if ($case_photo_url === '') {
-    $case_photo_url = $case_placeholder;
-}
-if ($case_photo_alt === '') {
-    $case_photo_alt = get_the_title();
-}
+$case_image  = spbau_get_case_image($case_photo, get_the_ID(), get_the_title());
+$case_photo_url = $case_image['url'];
+$case_photo_alt = $case_image['alt'];
 $video_file_url = '';
 $video_file_type = '';
 if (is_array($video_file) && !empty($video_file['url'])) {
