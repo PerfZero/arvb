@@ -10505,23 +10505,58 @@ a.breadcrumb__item:hover {
     transform: rotate(180deg);
 }
 .faq-accordion__answer {
-    max-height: 0;
+    display: grid;
+    grid-template-rows: 0fr;
     overflow: hidden;
-    transition:
-        max-height 0.3s ease,
-        padding 0.3s ease;
+    transition: grid-template-rows 0.3s ease;
     padding: 0 46px;
 }
-.faq-accordion__answer p {
+
+.faq-accordion__answer-inner {
+    min-height: 0;
+    overflow: hidden;
+    transition: padding-bottom 0.3s ease;
+}
+
+.faq-accordion__answer,
+.faq-accordion__answer p,
+.faq-accordion__answer ul,
+.faq-accordion__answer ol {
     font-weight: 400;
     font-size: 30px;
     line-height: 140%;
     color: #526077;
-    padding-bottom: 22px;
+}
+
+.faq-accordion__answer p,
+.faq-accordion__answer ul,
+.faq-accordion__answer ol {
     margin: 0;
 }
+
+.faq-accordion__answer p + p,
+.faq-accordion__answer p + ul,
+.faq-accordion__answer p + ol,
+.faq-accordion__answer ul + p,
+.faq-accordion__answer ol + p {
+    margin-top: 16px;
+}
+
+.faq-accordion__answer ul,
+.faq-accordion__answer ol {
+    padding-left: 1.2em;
+}
+
+.faq-accordion__answer li + li {
+    margin-top: 8px;
+}
+
 .faq-accordion__item--open .faq-accordion__answer {
-    max-height: 400px;
+    grid-template-rows: 1fr;
+}
+
+.faq-accordion__item--open .faq-accordion__answer-inner {
+    padding-bottom: 22px;
 }
 
 /* ===== FAQ Form ===== */
@@ -14614,7 +14649,10 @@ a.breadcrumb__item:hover {
         padding: 0 14px;
     }
 
-    .homepage .faq-accordion__answer p {
+    .homepage .faq-accordion__answer,
+    .homepage .faq-accordion__answer p,
+    .homepage .faq-accordion__answer ul,
+    .homepage .faq-accordion__answer ol {
         font-size: 15px;
     }
 

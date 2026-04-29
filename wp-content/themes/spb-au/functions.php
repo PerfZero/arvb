@@ -766,6 +766,14 @@ add_action("wp_enqueue_scripts", static function (): void {
     );
 
     wp_enqueue_script(
+        "spb-au-tracking",
+        get_template_directory_uri() . "/js/tracking.js",
+        [],
+        wp_get_theme()->get("Version"),
+        true,
+    );
+
+    wp_enqueue_script(
         "spb-au-consult-modal",
         get_template_directory_uri() . "/js/consult-modal.js",
         [],
@@ -807,6 +815,136 @@ function spbau_bitrix_webhook_url(): string
     return "";
 }
 
+function spbau_tracking_post_fields(): array
+{
+    $text_fields = [
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+        "utm_id",
+        "gclid",
+        "yclid",
+        "fbclid",
+        "roistat",
+        "openstat",
+    ];
+    $url_fields = [
+        "tracking_landing_page",
+        "tracking_current_page",
+        "tracking_referrer",
+    ];
+
+    $tracking = [];
+
+    foreach ($text_fields as $field) {
+        if (!isset($_POST[$field])) {
+            continue;
+        }
+
+        $value = sanitize_text_field(wp_unslash($_POST[$field]));
+        if ($value !== "") {
+            $tracking[$field] = $value;
+        }
+    }
+
+    foreach ($url_fields as $field) {
+        if (!isset($_POST[$field])) {
+            continue;
+        }
+
+        $value = esc_url_raw(wp_unslash($_POST[$field]));
+        if ($value !== "") {
+            $tracking[$field] = $value;
+        }
+    }
+
+    $referer = wp_get_referer();
+    if ($referer) {
+        $referer_query = (string) wp_parse_url($referer, PHP_URL_QUERY);
+        if ($referer_query !== "") {
+            parse_str($referer_query, $referer_params);
+            foreach ($text_fields as $field) {
+                if (
+                    !empty($tracking[$field]) ||
+                    empty($referer_params[$field]) ||
+                    !is_scalar($referer_params[$field])
+                ) {
+                    continue;
+                }
+
+                $value = sanitize_text_field(wp_unslash((string) $referer_params[$field]));
+                if ($value !== "") {
+                    $tracking[$field] = $value;
+                }
+            }
+        }
+
+        if (empty($tracking["tracking_landing_page"])) {
+            $tracking["tracking_landing_page"] = esc_url_raw($referer);
+        }
+        if (empty($tracking["tracking_current_page"])) {
+            $tracking["tracking_current_page"] = esc_url_raw($referer);
+        }
+    }
+
+    return $tracking;
+}
+
+function spbau_tracking_bitrix_utm_fields(array $tracking): array
+{
+    $map = [
+        "utm_source" => "UTM_SOURCE",
+        "utm_medium" => "UTM_MEDIUM",
+        "utm_campaign" => "UTM_CAMPAIGN",
+        "utm_content" => "UTM_CONTENT",
+        "utm_term" => "UTM_TERM",
+    ];
+    $fields = [];
+
+    foreach ($map as $tracking_key => $bitrix_key) {
+        if (!empty($tracking[$tracking_key])) {
+            $fields[$bitrix_key] = $tracking[$tracking_key];
+        }
+    }
+
+    return $fields;
+}
+
+function spbau_tracking_comments(array $tracking): string
+{
+    if (!$tracking) {
+        return "";
+    }
+
+    $labels = [
+        "utm_source" => "utm_source",
+        "utm_medium" => "utm_medium",
+        "utm_campaign" => "utm_campaign",
+        "utm_content" => "utm_content",
+        "utm_term" => "utm_term",
+        "utm_id" => "utm_id",
+        "gclid" => "gclid",
+        "yclid" => "yclid",
+        "fbclid" => "fbclid",
+        "roistat" => "roistat",
+        "openstat" => "openstat",
+        "tracking_landing_page" => "Первый URL",
+        "tracking_current_page" => "URL отправки",
+        "tracking_referrer" => "Referrer",
+    ];
+
+    $lines = [];
+    foreach ($labels as $key => $label) {
+        if (!empty($tracking[$key])) {
+            $lines[] = $label . ": " . $tracking[$key];
+        }
+    }
+
+    return $lines ? "Атрибуция:\n" . implode("\n", $lines) : "";
+}
+
 function spbau_send_smi_lead_to_bitrix(
     string $phone,
     string $referer = "",
@@ -830,6 +968,13 @@ function spbau_send_smi_lead_to_bitrix(
         $endpoint = rtrim($endpoint, "/") . "/crm.lead.add.json";
     }
 
+    $tracking = spbau_tracking_post_fields();
+    $tracking_comments = spbau_tracking_comments($tracking);
+    $comments_extra = trim(
+        ($extra_comments !== "" ? $extra_comments : "") .
+            ($tracking_comments !== "" ? "\n" . $tracking_comments : ""),
+    );
+
     $payload = [
         "fields" => [
             "TITLE" => $title,
@@ -846,12 +991,17 @@ function spbau_send_smi_lead_to_bitrix(
                 "\n" .
                 "Дата: " .
                 wp_date("Y-m-d H:i:s") .
-                ($extra_comments !== "" ? "\n" . $extra_comments : ""),
+                ($comments_extra !== "" ? "\n" . $comments_extra : ""),
             "SOURCE_DESCRIPTION" => $source_description,
             "OPENED" => "Y",
         ],
         "params" => ["REGISTER_SONET_EVENT" => "Y"],
     ];
+
+    $payload["fields"] = array_merge(
+        $payload["fields"],
+        spbau_tracking_bitrix_utm_fields($tracking),
+    );
 
     $email = sanitize_email($email);
     if ($email !== "" && is_email($email)) {

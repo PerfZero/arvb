@@ -1357,7 +1357,9 @@ $stats_cards = get_field("stats_cards") ?: []; ?>
                         </span>
                     </button>
                     <div class="faq-accordion__answer">
-                        <p><?php echo nl2br(esc_html($item["answer"])); ?></p>
+                        <div class="faq-accordion__answer-inner">
+                            <?php echo wp_kses_post($item["answer"]); ?>
+                        </div>
                     </div>
                 </div>
                 <?php endforeach; ?>
