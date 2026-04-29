@@ -2067,6 +2067,19 @@ a.breadcrumb__item:hover {
 
 .single-article__content li:not(.single-article__toc-item) {
     display: list-item;
+    list-style-position: outside;
+}
+
+.single-article__content ul:not(.single-article__toc-list) > li:not(.single-article__toc-item) {
+    list-style-type: disc;
+}
+
+.single-article__content ol > li:not(.single-article__toc-item) {
+    list-style-type: decimal;
+}
+
+.single-article__content li:not(.single-article__toc-item)::marker {
+    color: #5e6573;
 }
 
 .single-article__content > * {
@@ -2107,6 +2120,23 @@ a.breadcrumb__item:hover {
     color: #1a1a1a;
 }
 
+.single-article__content h1,
+.single-article__content h2,
+.single-article__content h3,
+.single-article__content h4,
+.single-article__content h5,
+.single-article__content h6 {
+    font-family: "Onest", sans-serif;
+    color: #1a1a1a;
+    font-weight: 700;
+    line-height: 120%;
+}
+
+.single-article__content h1 {
+    font-size: 56px;
+    margin: 40px 0 18px;
+}
+
 .single-article__content h2 {
     font-size: 46px;
     line-height: 120%;
@@ -2115,6 +2145,21 @@ a.breadcrumb__item:hover {
 .single-article__content h3 {
     font-size: 34px;
     line-height: 125%;
+}
+
+.single-article__content h4 {
+    font-size: 30px;
+    margin: 28px 0 12px;
+}
+
+.single-article__content h5 {
+    font-size: 26px;
+    margin: 24px 0 10px;
+}
+
+.single-article__content h6 {
+    font-size: 22px;
+    margin: 20px 0 10px;
 }
 
 .single-article__content ul,
@@ -2460,6 +2505,22 @@ a.breadcrumb__item:hover {
     .single-article__content h3 {
         font-size: 20px;
         margin: 24px 0 10px;
+    }
+
+    .single-article__content h1 {
+        font-size: 28px;
+        margin: 24px 0 12px;
+    }
+
+    .single-article__content h4 {
+        font-size: 18px;
+        margin: 20px 0 8px;
+    }
+
+    .single-article__content h5,
+    .single-article__content h6 {
+        font-size: 16px;
+        margin: 18px 0 8px;
     }
 
     .single-article__content .wp-block-pullquote p {
